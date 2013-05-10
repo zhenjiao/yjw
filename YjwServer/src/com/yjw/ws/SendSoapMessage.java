@@ -25,8 +25,7 @@ import javax.xml.soap.SOAPPart;
 public class SendSoapMessage {
 	public static void buildSoapMessage() {
 		try {
-			SOAPConnectionFactory conntools = SOAPConnectionFactory
-					.newInstance();
+			SOAPConnectionFactory conntools = SOAPConnectionFactory.newInstance();
 			SOAPConnection connection = conntools.createConnection();
 			
 			// 创建消息工厂
@@ -40,12 +39,9 @@ public class SendSoapMessage {
 			// 创建sope信封envelope，要开始写信了
 			SOAPEnvelope envelope = part.getEnvelope();
 			envelope.setPrefix("soap");
-			envelope.setAttribute("xmlns:xsi",
-					"http://www.w3.org/2001/XMLSchema-instance");
-			envelope.setAttribute("xmlns:xsd",
-					"http://www.w3.org/2001/XMLSchema");
-			envelope.setAttribute("xmlns:soap",
-					"http://schemas.xmlsoap.org/soap/envelope/");
+			envelope.setAttribute("xmlns:xsi","http://www.w3.org/2001/XMLSchema-instance");
+			envelope.setAttribute("xmlns:xsd","http://www.w3.org/2001/XMLSchema");
+			envelope.setAttribute("xmlns:soap","http://schemas.xmlsoap.org/soap/envelope/");
 			envelope.removeAttribute("xmlns:SOAP-ENV");
 			
 			// 写header
@@ -54,8 +50,7 @@ public class SendSoapMessage {
 			// 写BODY
 			SOAPBody body = envelope.getBody();
 			body.setPrefix("soap");
-			SOAPElement bodyElement = body.addChildElement("SendMessages", "",
-					"http://tempuri.org/");
+			SOAPElement bodyElement = body.addChildElement("SendMessages","","http://tempuri.org/");
 			bodyElement.addChildElement("uid").addTextNode("tjadri");
 			bodyElement.addChildElement("pwd").addTextNode("zhaoping");
 			bodyElement.addChildElement("tos").addTextNode("13917774194");
@@ -145,7 +140,8 @@ public class SendSoapMessage {
 		map.put("msg", "你好");
 		map.put("otime", "");
 		System.out.println("map:"+map);
-		String aString = new HttpPostUtils().httpPost("http://service2.winic.org/Service.asmx/SendMessages", map);
+		new HttpPostUtils();
+		String aString = HttpPostUtils.httpPost("http://service2.winic.org/Service.asmx/SendMessages", map);
 		System.out.println(aString);
 	}
 	

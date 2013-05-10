@@ -28,16 +28,16 @@
 		<form action="ChatAction" method="post">
 			sid:
 			<input type="text" name="sid" />
-			
+			</br>
 			to_user:
 			<input type="text" name="to_user" />
-			
+			</br>
 			content:
 			<input type="text" name="content" />
-			
+			</br>
 			deal_id:
 			<input type="text" name="deal_id" />
-			
+			</br>
 			flag:
 			<select name="flag">
 				<option value="setMsg">
@@ -47,6 +47,5 @@
 			</select>
 			<br>
 			<input type="submit">
-			</form>
 	</body>
 </html>

@@ -1,7 +1,6 @@
 package com.app.yjw.pojo;
 
 import java.io.Serializable;
-import java.util.Calendar;
 import java.util.Date;
 
 public class BaseDealInfo implements Serializable {

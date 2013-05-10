@@ -1,41 +1,63 @@
 package com.yjw.impl;
 
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
-import javax.swing.text.DefaultEditorKit.InsertBreakAction;
-
-import org.json.JSONException;
-import org.json.JSONObject;
-import org.springframework.jdbc.core.BatchPreparedStatementSetter;
-import org.springframework.jdbc.core.JdbcTemplate;
-
 import com.yjw.bean.DealBean;
-import com.yjw.dao.DealDAO;
-import com.yjw.sql.InformationSQL;
-import com.yjw.sql.prepareSQL;
-import com.yjw.tool.GetJdbcTemplate;
+import com.yjw.dao.EntityDAO;
+import com.yjw.sql.DealSQL;
 
 /*关于交易的具体实现封装*/
-public class DealImpl implements DealDAO {
-
-	private JdbcTemplate jdbcTemplate;
-	private InformationSQL sql;
-	private final int PAGE_SIZE = 20;
+public class DealImpl extends EntityImpl implements EntityDAO {
 
 	public DealImpl() {
-		this.jdbcTemplate = new GetJdbcTemplate().getJtl();
-		this.sql = new InformationSQL();
+		super(new DealSQL());
 	}
 
-	/* Add Deal */
-	public boolean addDeal(DealBean dealBean, ArrayList<String> phoneNumber,String reqConfirm) {
+	@Override
+	public Class<?> getBeanClass() {
+		return DealBean.class;
+	}
+
+	
+/*	public boolean addDeal(BeanPacker packer) {
+		try{
+			if (jdbcTemplate.update(sql.addDeal(packer))!=-1) return true;
+			return false;
+		}catch(Exception e){
+			return false;
+		}
+		
+	}
+	
+	public boolean delDeal(int id) {
 		boolean flag = false;
+		if (this.jdbcTemplate.update(this.sql.delDeal(id)) != 0) {
+			flag = true;
+		}
+		return flag;
+	}
+
+	
+	public List<Integer> syncDeal(GetInfoBean bean) {
+
+		// 获取分页信息
+		int pageSize = PAGE_SIZE;
+		int startCount = bean.getPage() * pageSize;
+		List<Map<String,?>> list=jdbcTemplate.queryForList(sql.syncDeal(bean.getId(),startCount,PAGE_SIZE));
+		List<Integer> ret=new ArrayList<Integer>();
+		for (Map<String,?> map:list){
+			ret.add((Integer)map.get("id"));
+		}
+		return ret;
+	}
+	
+	public BeanPacker getDeal(int id) {
+		try{
+		Map<String,?> map = jdbcTemplate.queryForMap(sql.getDeal(id));
+		return new BeanPacker(map,DealBean.class);
+		}catch(Exception e){
+			return null;
+		}
+	}*/
+	/*	boolean flag = false;
 		if (this.jdbcTemplate.update(this.sql.addDeal(dealBean)) >= 1) {
 
 			// 如果成功,继续加入需要分享的电话号码
@@ -84,79 +106,18 @@ public class DealImpl implements DealDAO {
 			}
 		}
 		return flag;
-	}
+	}*/
 
-	/* Delete Deal */
-	public boolean delDeal(int id) {
-		boolean flag = false;
-		if (this.jdbcTemplate.update(this.sql.delDeal(id)) != 0) {
-			flag = true;
-		}
-		return flag;
-	}
 
-	/* Get User's Deal */
-	public JSONObject syncDeal(int user_id, int pageIndex) {
-
-		// 获取分页信息
-		int pageSize = PAGE_SIZE;
-		int startCount = pageIndex * pageSize;
-		int endCount = (pageIndex + 1) * pageSize;
-		/* 查看还剩下几个生意 */
-		int flag = jdbcTemplate.queryForInt(this.sql.getSyncCount(user_id,
-				startCount, endCount));
-		List<?> list;
-		JSONObject object = new JSONObject();
-		if (flag != 0) {
-			list = jdbcTemplate.queryForList(this.sql.syncDeal(user_id,
-					startCount, endCount));
-			object = listToJSON(list);
-			for (int i = 1; i <= list.size(); i++) {
-				try {
-					JSONObject jsonObject = object.getJSONObject(i + "");
-					System.out.println(jsonObject);
-					JSONObject chatUserObject = getDealSharedUser(jsonObject
-							.getString("id").toString());
-					jsonObject.put("chatUsers", chatUserObject);
-				} catch (JSONException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-			}
-		} else {
-			Map<String, String> map = new HashMap<String, String>();
-			map.put("message", "empty");
-			object = new JSONObject(map);
-		}
-		return object;
-	}
 
 	/* Modify a Deal */
-	public boolean updateDeal(DealBean dealBean) {
+/*	public boolean updateDeal(DealBean dealBean) {
 		boolean flag = false;
 		return flag;
-	}
-
-	// 把从数据库查询得到的LIST转换为JSON
-	public JSONObject listToJSON(List<?> list) {
-		JSONObject object = new JSONObject();
-		Iterator<?> it = list.iterator();
-		int i = 1;
-		while (it.hasNext()) {
-			try {
-				object.put(i + "", (Map<?, ?>) it.next());
-			} catch (JSONException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			} finally {
-				i++;
-			}
-		}
-		return object;
-	}
+	}*/
 
 	// 转发消息
-	public boolean forwardDeal(int dealId, int for_user_id,
+/*	public boolean forwardDeal(int dealId, int for_user_id,
 			ArrayList<String> phoneNumber) {
 		boolean flag = false;
 		String sql = "insert into yjw_deal_intr(deal_id,user_id,phone_number,type) values(?,?,?,'FWD')";
@@ -191,21 +152,6 @@ public class DealImpl implements DealDAO {
 		return flag;
 	}
 
-	// 获取生意分享到的用户列表
-	public JSONObject getDealSharedUser(String dealId) {
-		JSONObject object;
-		List<?> list = jdbcTemplate.queryForList(sql.getSharedUser(dealId));
-		if (list.size() != 0) {
-			object = listToJSON(list);
-		} else {
-			Map<String, String> map = new HashMap<String, String>();
-			map.put("message", "empty");
-			object = new JSONObject(map);
-		}
-		return object;
-	}
-	
-
 	//获取手机上没有客户端的用户
 	@SuppressWarnings("unchecked")
 	public String check(ArrayList<String> phoneNumber) {
@@ -225,15 +171,13 @@ public class DealImpl implements DealDAO {
 	// 判断该手机号是否已经存在
 	private boolean isDuplicate(String cellphone) {
 		boolean flag = false;
-		int i = jdbcTemplate.queryForInt(new prepareSQL()
+		int i = jdbcTemplate.queryForInt(new RegisterSQL()
 				.cellPhoneDup(cellphone));
 		if (i != 0) {
 			flag = true;
 		}
 		return flag;
-	}
-	
-	
-	
+	}*/
 
+	
 }

@@ -10,19 +10,19 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.json.JSONObject;
-
 import com.yjw.bean.ChatBean;
-import com.yjw.proxy.ChatProxy;
-import com.yjw.tool.GenerateTool;
+import com.yjw.dao.ChatDAO;
+import com.yjw.impl.ChatImpl;
+import com.yjw.tool.BeanPacker;
+import com.yjw.tool.ErrorCode;
 
 public class ChatAction extends HttpServlet {
 	/**
 	 * 
 	 */
 	private static final long serialVersionUID = 676954535058785782L;
-	private GenerateTool generateTool;
-	private ChatProxy chatProxy;
+	//private GenerateTool generateTool;
+	private ChatDAO chatDao;
 
 	/**
 	 * Constructor of the object.
@@ -34,6 +34,7 @@ public class ChatAction extends HttpServlet {
 	/**
 	 * Destruction of the servlet. <br>
 	 */
+	@Override
 	public void destroy() {
 		super.destroy(); // Just puts "destroy" string in log
 		// Put your code here
@@ -53,6 +54,7 @@ public class ChatAction extends HttpServlet {
 	 * @throws IOException
 	 *             if an error occurred
 	 */
+	@Override
 	public void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 
@@ -60,52 +62,38 @@ public class ChatAction extends HttpServlet {
 		request.setCharacterEncoding("UTF-8");
 		response.setCharacterEncoding("UTF-8");
 		PrintWriter out = response.getWriter();
-		String sid = request.getParameter("sid");
+		
 		String flag = request.getParameter("flag");
 
 		if (flag.equals("setMsg")) {
-			String to_user = request.getParameter("to_user");
-			String content = request.getParameter("content");
-			int deal_id = Integer.parseInt(request.getParameter("deal_id"));
-			/* 初始化DTO */
-			ChatBean chatBean = new ChatBean();
-			chatBean.setDeal_id(deal_id);
-			chatBean.setContent(content);
-			chatBean.setTo_phone(to_user);
-			chatBean.setFrom_phone(this.generateTool.getPhoneNumber(sid));
-
-			if (this.chatProxy.setChat(chatBean)) {
-				out.print("success");
+			//chatBean.setDeal_id(deal_id);
+			//chatBean.setContent(content);
+			//chatBean.setTo_phone(to_user);
+			//chatBean.setFrom_phone(chatDao.getCellphoneById(id));
+			ChatBean bean = (ChatBean)new BeanPacker(request.getParameter("bean")).getBean();
+			if (chatDao.setChat(bean)) {
+				out.print(ErrorCode.E_SUCCESS);
 			} else {
-				out.print("fail");
+				out.print(ErrorCode.E_SET_CHAT_FAILED);				
 			}
 
 		} else if (flag.equals("getMsg")) {
-			String user_id = "" + this.generateTool.getUserId(sid);
-			String phone  = this.generateTool.getPhoneNumber(sid);
-			// 获取的未读项目存在JSON里
-			JSONObject object = new JSONObject();
-			
-			int size = this.chatProxy.getUnderReadMsgSize(phone);
-			HashMap<String, Object> map = new HashMap<String, Object>();
-			if (size > 0) {
-				try {
-					map = this.chatProxy.getUnderReadMsg(phone);
-					// 把消息置为已读
-					this.chatProxy.setIsRead((ArrayList<Integer>) map
-							.get("list"));
-				} catch (Exception e) {
-					// TODO: handle exception
-					e.printStackTrace();
-				} finally {
-					out.print((JSONObject) map.get("object"));
+			String id = request.getParameter("id");
+			HashMap<String, Object> map;
+			map = chatDao.getUnreadMsg(id);
+			if (map!=null){
+				ArrayList<Integer> list=(ArrayList<Integer>)map.get("list");
+				if (list.size()>0){
+					this.chatDao.setIsRead(list);
+					out.print(ErrorCode.E_SUCCESS);
+					out.print(map.get("object"));
+				}else{
+					out.print(ErrorCode.E_NULL_MSG);
 				}
-				// chatProxy.setIsRead();
-			} else {
-				out.print("Null");
+			}else{
+				out.print(ErrorCode.E_NULL_MSG);
 			}
 		}
-
 		out.flush();
 		out.close();
 	}
@@ -125,9 +113,9 @@ public class ChatAction extends HttpServlet {
 	 * @throws IOException
 	 *             if an error occurred
 	 */
+	@Override
 	public void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-
 		this.doGet(request, response);
 	}
 	
@@ -137,10 +125,10 @@ public class ChatAction extends HttpServlet {
 	 * @throws ServletException
 	 *             if an error occurs
 	 */
+	@Override
 	public void init() throws ServletException {
-		// Put your code here
-		this.generateTool = new GenerateTool();
-		this.chatProxy = new ChatProxy();
+		//this.generateTool = new GenerateTool();
+		this.chatDao = new ChatImpl();
 	}
 
 }

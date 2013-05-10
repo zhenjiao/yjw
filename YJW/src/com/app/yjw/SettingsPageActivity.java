@@ -11,13 +11,12 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.app.yjw.database.DBStatic;
-import com.app.yjw.pojo.UserInfo;
+import com.app.yjw.database.DBProxy;
 import com.app.yjw.thread.FetchBalanceThread;
 import com.app.yjw.thread.ShowMessageThread;
-import com.app.yjw.thread.ThreadController;
 import com.app.yjw.util.YJWMessage;
 import com.yjw.bean.Balance;
+import com.yjw.bean.UserBean;
 
 public class SettingsPageActivity extends BaseTabActivity implements
 		OnClickListener {
@@ -29,12 +28,12 @@ public class SettingsPageActivity extends BaseTabActivity implements
 	Handler handler = new Handler() {
 		@Override
 		public void handleMessage(Message msg) {
-			switch (msg.what) {
-			case YJWMessage.FETCH_BALANCE_SUCCESS:
-				balance = (Balance) msg.obj;
-				tv_balance.setText(new Float(balance.Balance).toString());
+			switch (YJWMessage.values()[msg.what]) {
+			case FETCH_BALANCE_SUCCESS:
+				balance =(Balance)msg.obj;
+				tv_balance.setText(((Float)balance.Balance).toString());
 				break;
-			case YJWMessage.FETCH_BALANCE_FAILURE:
+			case FETCH_BALANCE_FAILURE:
 				Toast.makeText(SettingsPageActivity.this, "获取余额出现错误",
 						Toast.LENGTH_SHORT).show();
 				break;
@@ -57,8 +56,7 @@ public class SettingsPageActivity extends BaseTabActivity implements
 	private void fetchBalance() {
 		FetchBalanceThread fbt = new FetchBalanceThread();
 		fbt.setHandler(this.handler);
-		ThreadController.getInstance().addThread(fbt);
-		ThreadController.getInstance().runAndRemove();
+		fbt.start();
 	}
 
 	private void init() {
@@ -73,12 +71,12 @@ public class SettingsPageActivity extends BaseTabActivity implements
 		return getParent().onKeyDown(keyCode, event);
 	}
 
+	@Override
 	public void onClick(View v) {
 		switch (v.getId()) {
 		case R.id.bt_left:
-			YJWActivity.database
-					.execSQL(DBStatic.generateSQLForDeleteAccount());
-			YJWActivity.user = new UserInfo();
+			DBProxy.clearAccountTable();
+			YJWActivity.user = new UserBean();
 			Intent intent = new Intent();
 			intent.setClass(this, YJWActivity.class);
 			startActivity(intent);

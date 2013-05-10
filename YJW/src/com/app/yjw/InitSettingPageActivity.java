@@ -9,15 +9,11 @@ import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.EditText;
 
-import com.app.yjw.database.DBProxy;
-import com.app.yjw.pojo.UserInfo;
 import com.app.yjw.thread.RegisterThread;
-import com.app.yjw.thread.RegisterThread.RegisterStep;
 import com.app.yjw.thread.ShowMessageThread;
-import com.app.yjw.thread.ThreadController;
-import com.app.yjw.util.Utility;
 import com.app.yjw.util.YJWMessage;
 
+@Deprecated
 public class InitSettingPageActivity extends Activity implements
 		OnClickListener {
 
@@ -29,20 +25,22 @@ public class InitSettingPageActivity extends Activity implements
 	private Handler handler = new Handler() {
 		@Override
 		public void handleMessage(Message msg) {
-			switch (msg.what) {
-			case YJWMessage.REGISTER_SUCCESS:
-				// insert into database
-				RegisterThread rt = (RegisterThread) ThreadController
-						.getInstance().fetchThread(RegisterThread.class);
+			switch (YJWMessage.values()[msg.what]) {
+			case REGISTER_SUCCESS:
+			/*	// insert into database
+				RegisterThread rt =new RegisterThread();
 				String phone = rt.getPhoneNumber();
 				String sid = rt.getSid();
+				rt.setStep(RegisterThread.RegisterStep.RegisterFinished);
+				rt.setHandler(null);
+				rt.start();
 				DBProxy.insertNewAccount(phone, sid);
 				YJWActivity.user = new UserInfo();
 				YJWActivity.user.setSid(sid);
 				YJWActivity.user.setPhoneNumber(phone);
 				Utility.startNewActivity(InitSettingPageActivity.this, MainPageActivity.class, true);
-				break;
-			case YJWMessage.REGISTER_FAILURE:
+				break;*/
+			case REGISTER_FAILURE:
 				// error;
 				break;
 			}
@@ -75,13 +73,14 @@ public class InitSettingPageActivity extends Activity implements
 		if (v.getId() == R.id.bt_left) {
 			this.finish();
 		} else if (v.getId() == R.id.bt_right && checkAllInfoFilled()) {
-			RegisterThread rt = (RegisterThread) ThreadController.getInstance()
-					.fetchThread(RegisterThread.class);
-			rt.setPassword(pwd_edittext.getText().toString());
+			RegisterThread rt = new RegisterThread();
+			//RegisterThread rt = new RegisterThread();
+		/*	rt.setPassword(pwd_edittext.getText().toString());
 			rt.setRealname(name_edittext.getText().toString());
-			rt.setStep(RegisterStep.FinishRegister);
+			rt.setStep(RegisterStep.FinishRegister);*/
 			rt.setHandler(handler);
-			ThreadController.getInstance().RunAsync();
+			//rt.start();
+			rt.start();
 		}
 	}
 

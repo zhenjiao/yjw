@@ -26,7 +26,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
     		<form action="ChatAction" method="post">
 			sid:
 			<input type="text" name="sid" />
-			
+			</br>
 			
 			
 			flag:

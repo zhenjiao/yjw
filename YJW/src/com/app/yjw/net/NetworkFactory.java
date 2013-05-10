@@ -17,21 +17,19 @@ import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.HttpClient;
-import org.apache.http.client.HttpResponseException;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.conn.ConnectTimeoutException;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
-import org.apache.http.params.HttpConnectionParams;
+import org.apache.http.params.CoreConnectionPNames;
+
+import android.os.Message;
+import android.util.Log;
 
 import com.app.yjw.thread.ShowMessageThread;
 import com.app.yjw.util.YJWMessage;
-
-import android.os.Handler;
-import android.os.Message;
-import android.util.Log;
 
 public class NetworkFactory {
 	public static NetworkFactory instance = null;
@@ -50,10 +48,8 @@ public class NetworkFactory {
 	private HttpClient getDefaultHttpClient() {
 		HttpClient httpClient;
 		httpClient = new DefaultHttpClient();
-		httpClient.getParams().setIntParameter(HttpConnectionParams.SO_TIMEOUT,
-				3000);
-		httpClient.getParams().setIntParameter(
-				HttpConnectionParams.CONNECTION_TIMEOUT, 10000);
+		httpClient.getParams().setIntParameter(CoreConnectionPNames.SO_TIMEOUT,	3000);
+		httpClient.getParams().setIntParameter(CoreConnectionPNames.CONNECTION_TIMEOUT, 10000);
 		return httpClient;
 	}
 
@@ -82,6 +78,7 @@ public class NetworkFactory {
 				}
 			} else {
 				// TODO 收到的状态码有错误
+				Log.e("NetworkFactory", "收到的状态码有错误");
 			}
 		} catch (ConnectTimeoutException cte) {
 			cte.printStackTrace();
@@ -97,30 +94,26 @@ public class NetworkFactory {
 
 	private String doPost(String basicURL, List<BasicNameValuePair> parameters) {
 		String responseText = "";
-		Log.d("Do Post URL", basicURL + "with " + parameters.size()
-				+ " parameters");
+		Log.i("Do Post URL", basicURL + " with " + parameters.size() + " parameters:"+parameters);
 
 		try {
 			HttpEntity httpentity = new UrlEncodedFormEntity(parameters, "UTF8");
 			HttpPost post = new HttpPost(basicURL);
 			post.setEntity(httpentity);
-			Log.d("Do Post URL", post.getURI().toString()); // see what is sent
 			HttpResponse response = this.getDefaultHttpClient().execute(post);
 			if (response.getStatusLine().getStatusCode() == HttpStatus.SC_OK) {
 				// TODO 解析字符串
 				// alreadyGotResponse = true;
 				InputStream iStream = response.getEntity().getContent();
-				BufferedReader bfReader = new BufferedReader(
-						new InputStreamReader(iStream));
+				BufferedReader bfReader = new BufferedReader(new InputStreamReader(iStream));
 				String str;
 				while ((str = bfReader.readLine()) != null) {
 					responseText = responseText + str;
 				}
-				Log.e("Response From Post", responseText);
+				Log.i("Response From Post", responseText);
 			} else {
 				// TODO 收到的状态码有错误
-				Log.e("doPost", "error status code"
-						+ response.getStatusLine().getStatusCode());
+				Log.i("doPost", "error status code"	+ response.getStatusLine().getStatusCode());
 			}
 		} catch(Exception e){
 			return null;
@@ -138,8 +131,8 @@ public class NetworkFactory {
 	private Object doPostObject(String basicURL,
 			List<BasicNameValuePair> parameters) {
 		Object obj = null;
-		Log.d("Do Post URL", basicURL + "with " + parameters.size()
-				+ " parameters");
+		Log.i("Do Post URL", basicURL + " with " + parameters.size()
+				+ " parameters:"+parameters);
 		try {
 			HttpEntity httpentity = new UrlEncodedFormEntity(parameters, "UTF8");
 			HttpPost post = new HttpPost(basicURL);
@@ -177,7 +170,7 @@ public class NetworkFactory {
 				
 				while(str==null){
 					Message msg = Message.obtain();
-					msg.what = YJWMessage.NET_FAIL_RECONNECT;
+					msg.what = YJWMessage.NET_FAIL_RECONNECT.ordinal();
 					ShowMessageThread.mHandler.sendMessage(msg);
 					try {
 						Thread.sleep(NetworkFactory.ReconnectTime);
@@ -190,7 +183,7 @@ public class NetworkFactory {
 			}
 			else {
 				Message msg = Message.obtain();
-				msg.what = YJWMessage.NET_FAIL_NORECONNECT;
+				msg.what = YJWMessage.NET_FAIL_NORECONNECT.ordinal();
 				ShowMessageThread.mHandler.sendMessage(msg);
 			}
 		}
@@ -205,7 +198,7 @@ public class NetworkFactory {
 			if(flag){
 				while(obj==null){	
 					Message msg = Message.obtain();
-					msg.what = YJWMessage.NET_FAIL_RECONNECT;
+					msg.what = YJWMessage.NET_FAIL_RECONNECT.ordinal();
 					ShowMessageThread.mHandler.sendMessage(msg);
 					try {
 						Thread.sleep(NetworkFactory.ReconnectTime);
@@ -218,7 +211,7 @@ public class NetworkFactory {
 			}
 			else {
 				Message msg = Message.obtain();
-				msg.what = YJWMessage.NET_FAIL_NORECONNECT;
+				msg.what = YJWMessage.NET_FAIL_NORECONNECT.ordinal();
 				ShowMessageThread.mHandler.sendMessage(msg);
 			}
 		}

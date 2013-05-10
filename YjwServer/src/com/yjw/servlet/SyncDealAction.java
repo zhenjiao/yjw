@@ -2,20 +2,22 @@ package com.yjw.servlet;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.util.List;
 
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.json.JSONObject;
-
-import com.yjw.proxy.DealProxy;
-import com.yjw.tool.GenerateTool;
+import com.yjw.bean.GetInfoBean;
+import com.yjw.dao.EntityDAO;
+import com.yjw.impl.DealImpl;
+import com.yjw.tool.BeanPacker;
+import com.yjw.tool.ErrorCode;
 
 public class SyncDealAction extends HttpServlet {
 	
-	private DealProxy dealProxy; 
+	private EntityDAO dealDao; 
 	/**
 	 * Constructor of the object.
 	 */
@@ -26,6 +28,7 @@ public class SyncDealAction extends HttpServlet {
 	/**
 	 * Destruction of the servlet. <br>
 	 */
+	@Override
 	public void destroy() {
 		super.destroy(); // Just puts "destroy" string in log
 		// Put your code here
@@ -41,6 +44,7 @@ public class SyncDealAction extends HttpServlet {
 	 * @throws ServletException if an error occurred
 	 * @throws IOException if an error occurred
 	 */
+	@Override
 	public void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 
@@ -48,20 +52,17 @@ public class SyncDealAction extends HttpServlet {
 		request.setCharacterEncoding("UTF-8");
 		response.setCharacterEncoding("UTF-8");
 		PrintWriter out = response.getWriter();
-		/*获取SID并换取用户ID*/
-		String sid = request.getParameter("sid");
-		int  pageIndex = Integer.parseInt(request.getParameter("pageIndex"));
-		JSONObject object;
-		try {
-			int  user_id = new GenerateTool().getUserId(sid);
-			object = this.dealProxy.syncDeal(user_id, pageIndex);
-			out.print(object);
-		} catch (Exception e) {
-			// TODO: handle exception
-			e.printStackTrace();
-			out.print("Problem in database!");
+		GetInfoBean bean=(GetInfoBean)new BeanPacker(request.getParameter("bean")).getBean();
+		List<Integer> ints=dealDao.sync(bean);
+		if (ints.size()==0){
+			out.print(ErrorCode.E_NULL_DEAL);
+		}else{
+			out.print(ErrorCode.E_SUCCESS);
+			for (Integer i:ints){
+				out.print("&");
+				out.print(i);
+			}
 		}
-	
 		out.flush();
 		out.close();
 	}
@@ -76,9 +77,9 @@ public class SyncDealAction extends HttpServlet {
 	 * @throws ServletException if an error occurred
 	 * @throws IOException if an error occurred
 	 */
+	@Override
 	public void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-
 		this.doGet(request, response);
 	}
 
@@ -87,9 +88,9 @@ public class SyncDealAction extends HttpServlet {
 	 *
 	 * @throws ServletException if an error occurs
 	 */
+	@Override
 	public void init() throws ServletException {
-		// Put your code here
-		this.dealProxy = new DealProxy();
+		this.dealDao = new DealImpl();
 	}
 
 }

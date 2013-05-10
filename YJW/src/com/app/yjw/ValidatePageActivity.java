@@ -1,7 +1,6 @@
 package com.app.yjw;
 
 import android.app.Activity;
-import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -13,11 +12,10 @@ import android.widget.EditText;
 
 import com.app.yjw.thread.RegisterThread;
 import com.app.yjw.thread.ShowMessageThread;
-import com.app.yjw.thread.RegisterThread.RegisterStep;
-import com.app.yjw.thread.ThreadController;
-import com.app.yjw.util.Utility;
+import com.app.yjw.util.Util;
 import com.app.yjw.util.YJWMessage;
 
+@Deprecated
 public class ValidatePageActivity extends Activity implements OnClickListener {
 
 	private Button next_button;
@@ -28,13 +26,13 @@ public class ValidatePageActivity extends Activity implements OnClickListener {
 	{
 		@Override
 		public void handleMessage(Message msg) {
-			switch(msg.what)
+			switch(YJWMessage.values()[msg.what])
 			{
-			case YJWMessage.REGISTER_SUCCESS:
-				Utility.startNewActivity(ValidatePageActivity.this, InitSettingPageActivity.class, true);
+			case REGISTER_SUCCESS:
+				Util.startNewActivity(ValidatePageActivity.this, InitSettingPageActivity.class, true);
 				break;
-			case YJWMessage.REGISTER_FAILURE:
-				System.out.println("failure");
+			case REGISTER_FAILURE:
+				Log.i("ValidatePageActivaty","failure");
 				break;
 			}
 		}
@@ -43,11 +41,11 @@ public class ValidatePageActivity extends Activity implements OnClickListener {
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		setContentView(R.layout.validation_page);
-		next_button = (Button) findViewById(R.id.button1);
+		next_button = (Button) findViewById(R.id.btn_validatecode);
 		next_button.setOnClickListener(this);
 		back_button = (Button) findViewById(R.id.bt_left);
 		back_button.setOnClickListener(this);
-		code_edittext = (EditText) findViewById(R.id.editText1);
+		code_edittext = (EditText) findViewById(R.id.editPassword);
 		super.onCreate(savedInstanceState);
 	}
 	@Override
@@ -61,31 +59,19 @@ public class ValidatePageActivity extends Activity implements OnClickListener {
 	}
 
 	@Override
-	public void onBackPressed() {
-		Log.d("onBackPressed", "pressed inside Validation");
-		Utility.startNewActivity(this, RegisterPageActivity.class, true);
-	}
-	@Override
 	public void onClick(View arg0) {
-		if(arg0.getId() == R.id.button1 && checkAllInfoFilled())
+		if(arg0.getId() == R.id.btn_validatecode && checkAllInfoFilled())
 		{
-			// run thread 
-			RegisterThread rt = (RegisterThread) ThreadController
-					.getInstance().fetchThread(RegisterThread.class);
-			rt.setValidateCode(code_edittext.getText().toString());
-			rt.setStep(RegisterStep.SendValidateCode);
+			RegisterThread rt = new RegisterThread();
+		//	rt.setValidateCode(code_edittext.getText().toString());
+			//rt.setStep(RegisterStep.SendValidateCode);
 			rt.setHandler(handler);
-			rt.run();
-//			ThreadController.getInstance().RunAsync();
-			
-			Intent intent = new Intent();
-			intent.setClass(this, MainPageActivity.class);
-			startActivity(intent);
-			this.finish();
+			//ThreadController.getInstance().addThread(rt);
+			rt.start();
+			//ThreadController.getInstance().RunSync();
 		}else if(arg0.getId() == R.id.bt_left)
 		{
-		
-			Utility.startNewActivity(this, RegisterPageActivity.class, true);
+			Util.startNewActivity(this, RegisterPageActivity.class, true);
 		}
 	}
 

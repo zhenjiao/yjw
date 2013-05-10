@@ -24,8 +24,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
   
   <body>
   <form action="OutputBalanceAction" method="post">
- sid:<input type="text" name="sid"/>
+ sid:<input type="text" name="sid"/></br>
  <input type="submit">
- </form>
   </body>
 </html>

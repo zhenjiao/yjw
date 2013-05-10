@@ -1,13 +1,15 @@
 package com.yjw.bean;
 
+import com.yjw.tool.Util;
+
 public class UserBean {
-	private int id;
+	private Integer id;
 	private String name;
 	private String cellphone;
 	private String password;
 	private String email;
-	private String timestamp;
-	private String sid;
+	private String timestamps;
+	private Float balance; 
 
 	public String getName() {
 		return name;
@@ -17,11 +19,11 @@ public class UserBean {
 		this.name = name;
 	}
 
-	public int getId() {
+	public Integer getId() {
 		return id;
 	}
 
-	public void setId(int id) {
+	public void setId(Integer id) {
 		this.id = id;
 	}
 
@@ -46,23 +48,23 @@ public class UserBean {
 	}
 
 	public void setEmail(String email) {
-		this.email = email;
+		if (Util.isEmpty(email)) this.email=null;
+		else this.email = email;
 	}
 
-	public String getTimestamp() {
-		return timestamp;
+	public String getTimestamps() {
+		return timestamps;
 	}
 
-	public void setTimestamp(String timestamp) {
-		this.timestamp = timestamp;
+	public void setTimestamps(String timestamps) {
+		this.timestamps = timestamps;
 	}
 
-	public String getSid() {
-		return sid;
+	public Float getBalance() {
+		return balance;
 	}
 
-	public void setSid(String sid) {
-		this.sid = sid;
+	public void setBalance(Float balance) {
+		this.balance = balance;
 	}
-
 }

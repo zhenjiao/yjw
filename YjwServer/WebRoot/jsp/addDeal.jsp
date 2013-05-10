@@ -24,18 +24,18 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
   
   <body>
          <form action="AddDealAction" method="post">
-sid:<input type="text" name="sid"/>
-title：<input type="text" name="title"/>
-content:<input type="text" name="content"/>
-fee：<input type="text" name="fee"/>
+sid:<input type="text" name="sid"/></br>
+title：<input type="text" name="title"/></br>
+content:<input type="text" name="content"/></br>
+fee：<input type="text" name="fee"/></br>
 <!-- commission：<input type="text" name="commission"/></br>-->
-phoneToShare：<input type="text" name="phoneToShare"/>
-expire_date：<input type="text" name="expire_date"/>
+phoneToShare：<input type="text" name="phoneToShare"/></br>
+expire_date：<input type="text" name="expire_date"/></br>
 reqConfirm：<select name="reqConfirm">
 <option value="Yes">Yes</option>
 <option value="No">No</option>
 
-</select>
+</select></br>
  <input type="submit">
   </form></body>
 </html>

@@ -83,17 +83,18 @@ public class DealReplyPageActivity extends BaseActivity implements
 	private String to_user_phone;
 
 	Handler handler = new Handler() {
+		@Override
 		public void handleMessage(Message msg) {
-			switch (msg.what) {
-			case YJWMessage.SEND_MESSAGE_SUCCESS:
+			switch (YJWMessage.values()[msg.what]) {
+			case SEND_MESSAGE_SUCCESS:
 				Toast.makeText(DealReplyPageActivity.this, "发送消息成功",
 						Toast.LENGTH_SHORT).show();
 				break;
-			case YJWMessage.SEND_MESSAGE_FAILURE:
+			case SEND_MESSAGE_FAILURE:
 				Toast.makeText(DealReplyPageActivity.this, "发送消息失败",
 						Toast.LENGTH_SHORT).show();
 				break;
-			case YJWMessage.GET_MESSAGE_SUCCESS:
+			case GET_MESSAGE_SUCCESS:
 				/*
 				 * adding the message to Database and the list then nofity the
 				 * change
@@ -108,8 +109,8 @@ public class DealReplyPageActivity extends BaseActivity implements
 				msgList.addAll(chatList);
 				adapter.notifyDataSetChanged();
 				break;
-			case YJWMessage.GET_MESSAGE_NULL:
-			case YJWMessage.GET_MESSAGE_FAILURE:
+			case GET_MESSAGE_NULL:
+			case GET_MESSAGE_FAILURE:
 				break;
 			}
 		}
@@ -140,6 +141,7 @@ public class DealReplyPageActivity extends BaseActivity implements
 	 * @author Yiheng Tao
 	 * 
 	 */
+	@Override
 	protected void init() {
 		super.init();
 		fill_deal();
@@ -177,7 +179,7 @@ public class DealReplyPageActivity extends BaseActivity implements
 	private void receivedMessage() {
 		MainPageActivity.msgThread.setMode(PullMsgThread.Mode.Displaying);
 		MainPageActivity.msgThread.setDisplayDealId(current_deal.getId());
-		MainPageActivity.msgThread.setDisplayHandler(this.handler);
+		MainPageActivity.msgThread.setHandler(this.handler);
 		MainPageActivity.msgThread.setChatUser(to_user_phone);
 	}
 
@@ -185,7 +187,7 @@ public class DealReplyPageActivity extends BaseActivity implements
 	protected void onStop() {
 		MainPageActivity.msgThread.setMode(PullMsgThread.Mode.Running);
 		MainPageActivity.msgThread.setDisplayDealId(null);
-		MainPageActivity.msgThread.setDisplayHandler(null);
+		MainPageActivity.msgThread.setHandler(null);
 		MainPageActivity.msgThread.setChatUser(null);
 		super.onStop();
 	}

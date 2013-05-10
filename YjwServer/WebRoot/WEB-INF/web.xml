@@ -7,17 +7,12 @@
   <servlet-name>RegisterAction</servlet-name>
   <servlet-class>com.yjw.servlet.RegisterAction</servlet-class>
  </servlet>
-<!-- <servlet>
+ <servlet>
   <description>This is the description of my J2EE component</description>
   <display-name>This is the display name of my J2EE component</display-name>
   <servlet-name>LogonAction</servlet-name>
   <servlet-class>com.yjw.servlet.LogonAction</servlet-class>
  </servlet>
- -->
-<context-param> 
-<param-name>contextConfigLocation</param-name> 
-<param-value>/WEB-INF/classes/applicationContext.xml</param-value> 
-</context-param> 
  <servlet>
   <description>This is the description of my J2EE component</description>
   <display-name>This is the display name of my J2EE component</display-name>
@@ -116,6 +111,69 @@
     <servlet-name>OutputBalanceAction</servlet-name>
     <servlet-class>com.yjw.servlet.OutputBalanceAction</servlet-class>
   </servlet>
+  <servlet>
+    <description>This is the description of my J2EE component</description>
+    <display-name>This is the display name of my J2EE component</display-name>
+    <servlet-name>GetValidateCodeAction</servlet-name>
+    <servlet-class>com.yjw.servlet.GetValidateCodeAction</servlet-class>
+  </servlet>
+  <servlet>
+    <description>This is the description of my J2EE component</description>
+    <display-name>This is the display name of my J2EE component</display-name>
+    <servlet-name>GetUserAction</servlet-name>
+    <servlet-class>com.yjw.servlet.GetUserAction</servlet-class>
+  </servlet>
+  <servlet>
+    <description>This is the description of my J2EE component</description>
+    <display-name>This is the display name of my J2EE component</display-name>
+    <servlet-name>SyncTransAction</servlet-name>
+    <servlet-class>com.yjw.servlet.SyncTransAction</servlet-class>
+  </servlet>
+  <servlet>
+    <description>This is the description of my J2EE component</description>
+    <display-name>This is the display name of my J2EE component</display-name>
+    <servlet-name>GetTransAction</servlet-name>
+    <servlet-class>com.yjw.servlet.GetTransAction</servlet-class>
+  </servlet>
+  <servlet>
+    <description>This is the description of my J2EE component</description>
+    <display-name>This is the display name of my J2EE component</display-name>
+    <servlet-name>GetUserByPhoneAction</servlet-name>
+    <servlet-class>com.yjw.servlet.GetUserByPhoneAction</servlet-class>
+  </servlet>
+  <servlet>
+    <description>This is the description of my J2EE component</description>
+    <display-name>This is the display name of my J2EE component</display-name>
+    <servlet-name>AddTransAction</servlet-name>
+    <servlet-class>com.yjw.servlet.AddTransAction</servlet-class>
+  </servlet>
+  <servlet>
+    <description>This is the description of my J2EE component</description>
+    <display-name>This is the display name of my J2EE component</display-name>
+    <servlet-name>DelTransAction</servlet-name>
+    <servlet-class>com.yjw.servlet.DelTransAction</servlet-class>
+  </servlet>
+  <servlet>
+    <description>This is the description of my J2EE component</description>
+    <display-name>This is the display name of my J2EE component</display-name>
+    <servlet-name>ConfirmTransAction</servlet-name>
+    <servlet-class>com.yjw.servlet.ConfirmTransAction</servlet-class>
+  </servlet>
+  <servlet>
+    <description>This is the description of my J2EE component</description>
+    <display-name>This is the display name of my J2EE component</display-name>
+    <servlet-name>ConfTransAction</servlet-name>
+    <servlet-class>com.yjw.servlet.ConfTransAction</servlet-class>
+  </servlet>
+
+
+
+
+
+
+
+
+
 
 
 
@@ -128,6 +186,10 @@
  <servlet-mapping>
   <servlet-name>RegisterAction</servlet-name>
   <url-pattern>/RegisterAction</url-pattern>
+ </servlet-mapping>
+ <servlet-mapping>
+  <servlet-name>LogonAction</servlet-name>
+  <url-pattern>/LogonAction</url-pattern>
  </servlet-mapping>
  <servlet-mapping>
   <servlet-name>LoginAction</servlet-name>
@@ -196,6 +258,42 @@
   <servlet-mapping>
     <servlet-name>OutputBalanceAction</servlet-name>
     <url-pattern>/OutputBalanceAction</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>GetValidateCodeAction</servlet-name>
+    <url-pattern>/GetValidateCodeAction</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>GetUserAction</servlet-name>
+    <url-pattern>/GetUserAction</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>SyncTransAction</servlet-name>
+    <url-pattern>/SyncTransAction</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>GetTransAction</servlet-name>
+    <url-pattern>/GetTransAction</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>GetUserByPhoneAction</servlet-name>
+    <url-pattern>/GetUserByPhoneAction</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>AddTransAction</servlet-name>
+    <url-pattern>/AddTransAction</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>DelTransAction</servlet-name>
+    <url-pattern>/DelTransAction</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>ConfirmTransAction</servlet-name>
+    <url-pattern>/ConfirmTransAction</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>ConfTransAction</servlet-name>
+    <url-pattern>/ConfTransAction</url-pattern>
   </servlet-mapping>
  <welcome-file-list>
   <welcome-file>index.jsp</welcome-file>

@@ -24,8 +24,8 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
   
   <body>
           <form action="DeclineDealAction" method="post">
-dealId<input type="text" name="dealid"/>
-sid：<input type="text" name="sid"/>
+dealId<input type="text" name="dealid"/></br>
+sid：<input type="text" name="sid"/></br>
 
  <input type="submit">
  </form>

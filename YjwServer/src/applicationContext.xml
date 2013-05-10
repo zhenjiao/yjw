@@ -17,16 +17,23 @@
 			<!-- <value>xiaoguo</value> -->
 		</property>
        <property name="password">
-       		<value>secret</value>
+       		<!-- <value>tongji</value> -->
 			<!-- <value>8426</value> -->
+			<value>7uji89</value>
 		</property>
 	</bean>
 	
 	<!--Redefine jdbcTemplate-->
     <bean id="jdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate">
     <property name="dataSource">
-    <ref bean="dataSource"/>
+    <ref bean="dataSource"></ref>
     </property>
     </bean>
+    
+    <bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+	<property name="dataSource">
+	<ref local="dataSource" />
+	</property>
+	</bean>
 	
 </beans>

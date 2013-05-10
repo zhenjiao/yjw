@@ -10,39 +10,72 @@
 
 package com.app.yjw.util;
 
-public class YJWMessage {
-
+public enum YJWMessage {
+	YJWMESSAGE_NULL,
 	/* messages used in PushMsgThread.java and DealReplyPageActivity.java */
-	public static final int SEND_MESSAGE_SUCCESS = 1;
-	public static final int SEND_MESSAGE_FAILURE = 2;
+	SEND_MESSAGE_SUCCESS,
+	SEND_MESSAGE_FAILURE,
 
 	/* messages used in PullMsgThread.java and YJWActivity.java */
-	public static final int GET_MESSAGE_SUCCESS = 3;
-	public static final int GET_MESSAGE_NULL = 4;
-	public static final int GET_MESSAGE_FAILURE = 5;
+	GET_MESSAGE_SUCCESS,
+	GET_MESSAGE_NULL,
+	GET_MESSAGE_FAILURE,
 
 	/* messages used in GetSharedUserThread.java and DealDetailPageActivity.java */
-	public static final int GET_SHARED_USER_SUCCESS = 6;
-	public static final int GET_SHARED_USER_NONE = 7;
-	public static final int GET_SHARED_USER_FAILURE = 8;
+	GET_SHARED_USER_SUCCESS,
+	GET_SHARED_USER_NONE,
+	GET_SHARED_USER_FAILURE,
 
-	public static final int CONFIRM_ACCEPT_SUCCESS = 9;
-	public static final int CONFIRM_ACCEPT_FAILURE = 10;
-	public static final int CONFIRM_DECLINE_SUCCESS = 11;
-	public static final int CONFIRM_DECLINE_FAILURE = 12;
+	CONFIRM_ACCEPT_SUCCESS,
+	CONFIRM_ACCEPT_FAILURE,
+	CONFIRM_DECLINE_SUCCESS,
+	CONFIRM_DECLINE_FAILURE,
 	
 	/* messages used in Register */
-	public static final int REGISTER_SUCCESS = 13;
-	public static final int REGISTER_FAILURE = 14;
+	REGISTER_SUCCESS,
+	REGISTER_FAILURE,
+	REGISTER_GETVALIDATECODE,
 
 	/* fetch balance */
-	public static final int FETCH_BALANCE_SUCCESS = 15;
-	public static final int FETCH_BALANCE_FAILURE = 16;
+	FETCH_BALANCE_SUCCESS,
+	FETCH_BALANCE_FAILURE,
 	
 	/* check update */
-	public static final int NEW_UPDATE = 17;
+	NEW_UPDATE,
 	
 	/* network messages*/
-	public static final int NET_FAIL_RECONNECT = 18;
-	public static final int NET_FAIL_NORECONNECT = 19;
+	NET_FAIL_RECONNECT,
+	NET_FAIL_NORECONNECT,
+	
+	/* message used in Login */
+	LOGIN_SUCCESS,
+	LOGIN_FAILED,
+	
+	/* message used in deal*/
+	SYNC_DEAL_SUCCESS,
+	SYNC_DEAL_FAILED,
+	ADD_DEAL_SUCCESS,
+	ADD_DEAL_FAILED,
+	DEL_DEAL_SUCCESS,
+	DEL_DEAL_FAILED,
+	GET_DEAL_SUCCESS,
+	GET_DEAL_FAILED,
+	
+	/* message used in trans*/
+	GET_TRANS_SUCCESS,
+	GET_TRANS_FAILED,
+	ADD_TRANS_SUCCESS,
+	ADD_TRANS_FAILED,
+	DEL_TRANS_SUCCESS,
+	DEL_TRANS_FAILED,
+	SYNC_TRANS_SUCCESS,
+	SYNC_TRANS_FAILED,
+	CONF_TRANS_SUCCESS,
+	CONF_TRANS_FAILED,
+	CONF_TRANS_NOT_ENOUGH_BALANCE,
+	
+	/* message used in buffer thread */
+	BUFFER_USER,
+	BUFFER_DEAL,
+	BUFFER_CHAT,
 }

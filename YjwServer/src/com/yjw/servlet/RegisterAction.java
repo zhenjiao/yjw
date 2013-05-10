@@ -8,17 +8,16 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.springframework.jdbc.core.JdbcTemplate;
-
+import com.yjw.bean.RegisterBean;
 import com.yjw.bean.UserBean;
-import com.yjw.proxy.RegisterProxy;
-import com.yjw.tool.GenerateTool;
-import com.yjw.tool.GetJdbcTemplate;
+import com.yjw.dao.RegisterDAO;
+import com.yjw.impl.RegisterImpl;
+import com.yjw.tool.BeanPacker;
+import com.yjw.tool.ErrorCode;
 
 public class RegisterAction extends HttpServlet {
-	private RegisterProxy proxy;
-	private JdbcTemplate jdbcTemplate;
-	private GenerateTool gnerateTool;
+	//private JdbcTemplate jdbcTemplate;
+	private RegisterDAO registerDAO;
 	/**
 	 * Constructor of the object.
 	 */
@@ -29,6 +28,7 @@ public class RegisterAction extends HttpServlet {
 	/**
 	 * Destruction of the servlet. <br>
 	 */
+	@Override
 	public void destroy() {
 		super.destroy(); // Just puts "destroy" string in log
 		// Put your code here
@@ -48,6 +48,7 @@ public class RegisterAction extends HttpServlet {
 	 * @throws IOException
 	 *             if an error occurred
 	 */
+	@Override
 	public void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 
@@ -56,33 +57,25 @@ public class RegisterAction extends HttpServlet {
 		response.setCharacterEncoding("UTF-8");
 		PrintWriter out = response.getWriter();
 		String msg = "";
-
-		// 获取需要的信息
-		String cellphone = request.getParameter("cellphone");
-		if (this.proxy.isDuplicate(cellphone)) {
-			msg = "已经注册的帐号";
-		} else {
-			UserBean userBean = new UserBean();
-			String sid = this.gnerateTool.generateSid();
-			
-			//把注册信息加入到Bean里
-			userBean.setCellphone(cellphone);
-			userBean.setSid(sid);
-
-			
-			if(proxy.register(userBean)){
-				//加入验证信息
-				String validateString = this.gnerateTool.genValidateString();
-				if(this.proxy.insertValidateCode(sid, validateString)){
-					//msg = sid;
-					msg = sid+","+validateString;	
-				}else{
-					msg = "获取验证信息失败";
-				}
-				
+		
+		
+		BeanPacker packer = new BeanPacker(request.getParameter("bean"));
+		RegisterBean rbean =(RegisterBean)packer.getBean();
+		String sid = rbean.getSid();
+		String code = rbean.getValidateCode();
+		if(this.registerDAO.validate(sid, code)){
+			UserBean u=(UserBean)packer.transTo(UserBean.class);
+			//u.setName(request.getParameter("name"));
+			//u.setPassword(request.getParameter("password"));
+			//u.setCellphone(request.getParameter("cellphone"));
+			//u.setEmail(request.getParameter("email"));
+			if(this.registerDAO.register(u)){
+				msg = ErrorCode.E_SUCCESS.toString();
 			}else{
-				msg = "注册失败";
+				msg = ErrorCode.E_FAILED.toString();
 			}
+		}else{
+			msg = ErrorCode.E_INVALIDATE_FAILED.toString();
 		}
 		out.print(msg);
 		out.flush();
@@ -104,6 +97,7 @@ public class RegisterAction extends HttpServlet {
 	 * @throws IOException
 	 *             if an error occurred
 	 */
+	@Override
 	public void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 
@@ -116,11 +110,10 @@ public class RegisterAction extends HttpServlet {
 	 * @throws ServletException
 	 *             if an error occurs
 	 */
+	@Override
 	public void init() throws ServletException {
-		// Put your code here
-		this.jdbcTemplate = new GetJdbcTemplate().getJtl();
-		this.proxy = new RegisterProxy(jdbcTemplate);
-		this.gnerateTool = new GenerateTool();
+		//this.jdbcTemplate = new GetJdbcTemplate().getJtl();
+		this.registerDAO = new RegisterImpl();
 	}
 
 }

@@ -1,9 +1,9 @@
 package com.app.yjw.thread;
 
 import java.util.LinkedList;
-import android.util.Log;
 import java.util.Queue;
 
+@Deprecated
 public class ThreadController {
 
 	private Queue<Thread> threadQueue;
@@ -36,7 +36,7 @@ public class ThreadController {
 	public void RunAsync() {
 		for (Thread t : threadQueue) {
 			if (!t.isAlive()) {
-				Log.d("thread = ", t.getName());
+				//Log.d("Thread",t.getClass().getName());
 				t.start();
 			}
 		}
@@ -55,6 +55,7 @@ public class ThreadController {
 			Thread t = threadQueue.poll();
 			if (!t.isAlive()) {
 				t.start();
+				//t.run();
 			}
 			//runningQueue.add(t);
 		}

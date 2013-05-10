@@ -1,25 +1,23 @@
 package com.app.yjw;
 
-import java.util.LinkedList;
-import java.util.List;
-
-import org.apache.http.message.BasicNameValuePair;
-
 import android.app.Activity;
-import android.content.ContentValues;
-import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import com.app.yjw.database.DBStatic;
-import com.app.yjw.net.NetworkConstants;
-import com.app.yjw.net.NetworkFactory;
-import com.app.yjw.pojo.UserInfo;
+import com.app.yjw.database.DBProxy;
+import com.app.yjw.thread.LoginThread;
 import com.app.yjw.thread.ShowMessageThread;
+import com.app.yjw.util.BeanPacker;
+import com.app.yjw.util.Util;
+import com.app.yjw.util.YJWMessage;
+import com.yjw.bean.AccountBean;
+import com.yjw.bean.UserBean;
 
 
 public class LoginPageActivity extends Activity implements OnClickListener {
@@ -28,11 +26,39 @@ public class LoginPageActivity extends Activity implements OnClickListener {
 	Button login_button;
 	EditText username_edittext;
 	EditText password_edittext;
+	static String phone;
+	static String password;
+	static private LoginPageActivity instance;
+	
+	static public LoginPageActivity getInstance() {
+		return instance;
+	}
+
+	static private Handler handler = new Handler() {
+		@Override
+		public void handleMessage(Message msg) {
+			switch(YJWMessage.values()[msg.what]){
+			case LOGIN_SUCCESS:{
+				Toast.makeText(getInstance(), "登录成功", Toast.LENGTH_SHORT).show();
+				DBProxy.clearAccountTable();
+				UserBean bean = (UserBean)msg.obj;	
+				YJWActivity.user = bean;
+				DBProxy.insertNewAccount((AccountBean)new BeanPacker(bean).transTo(AccountBean.class));
+				Util.startNewActivity(getInstance(), TestActivity.class, true);
+			}break;
+			default:
+				Toast.makeText(getInstance(), (String)msg.obj, Toast.LENGTH_SHORT).show();
+				break;
+			}
+			//super.handleMessage(msg);
+		}
+	};
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.signin_page);
+		instance=this;
 		init();
 	}
 	@Override
@@ -54,47 +80,26 @@ public class LoginPageActivity extends Activity implements OnClickListener {
 	@Override
 	public void onClick(View v) {
 		if (v.getId() == R.id.bt_left) {
-			Intent intent = new Intent();
-			intent.setClass(this, YJWActivity.class);
-			startActivity(intent);
+			Util.startNewActivity(this, YJWActivity.class, true);
 			this.finish();
 		}
 		if (v.getId() == R.id.bt_right) {
 			// check
 
-			String phone = username_edittext.getText().toString();
-			String password = password_edittext.getText().toString();
-			if (phone.equals("") || password.equals(""))
-				return;
-			List<BasicNameValuePair> parameters = new LinkedList<BasicNameValuePair>();
-			parameters.add(new BasicNameValuePair("cellphone", phone));
-			parameters.add(new BasicNameValuePair("password", password));
-			String str = NetworkFactory.getInstance().doPost(
-					NetworkConstants.URL_LOGIN, parameters,false);
-			//str="4313344070361043716668";
-			System.out.print(str);
-			if (str== null){
+			phone = username_edittext.getText().toString();
+			password = password_edittext.getText().toString();
+			if (phone.length()!=11 || password.length()<6) {
+				Toast.makeText(this,"请填写正确的登录信息", Toast.LENGTH_SHORT).show();
 				return;
 			}
-			else if (str.equals("该账户不存在") || str.equals("")) {
-				Toast.makeText(this, "该账户不存在", Toast.LENGTH_SHORT).show();
-				return;
-			}
-
-			YJWActivity.database
-					.execSQL(DBStatic.generateSQLForDeleteAccount());
-			YJWActivity.user = new UserInfo();
-			YJWActivity.user.setSid(str);
-			YJWActivity.user.setPhoneNumber(phone);
-			ContentValues cv = new ContentValues();
-			cv.put("phone", phone);
-			cv.put("sid", str);
-			YJWActivity.database.insert(DBStatic.AccountTableName, null, cv);
-			Intent intent = new Intent();
-			intent.setClass(this, MainPageActivity.class);
-			startActivity(intent);
-			this.finish();
+			AccountBean bean=new AccountBean();
+			bean.setCellphone(phone);
+			bean.setPassword(password);
+			LoginThread lt=new LoginThread();
+			lt.setBean(bean);
+			lt.setHandler(handler);
+			lt.start();
 		}
 	}
-
+	
 }

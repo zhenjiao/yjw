@@ -4,7 +4,6 @@ import java.sql.Date;
 
 import android.annotation.SuppressLint;
 import android.content.Intent;
-//import android.graphics.Color;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -18,8 +17,12 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.app.yjw.ctrl.YJWControler;
 import com.app.yjw.thread.AddDealThread;
 import com.app.yjw.thread.ShowMessageThread;
+import com.app.yjw.util.Util;
+import com.app.yjw.util.YJWMessage;
+import com.yjw.bean.DealBean;
 
 @SuppressLint({ "HandlerLeak", "HandlerLeak" })
 public class AddDealPageActivity extends BaseActivity implements
@@ -44,10 +47,9 @@ public class AddDealPageActivity extends BaseActivity implements
 	private Handler handler = new Handler() {
 		@Override
 		public void handleMessage(Message msg) {
-			if (msg.what == 1) {
-				Toast.makeText(AddDealPageActivity.this, "添加成功",
-						Toast.LENGTH_SHORT).show();
-				String str = (String) msg.obj;
+			if (msg.what == YJWMessage.ADD_DEAL_SUCCESS.ordinal()) {
+				Toast.makeText(AddDealPageActivity.this, "添加成功",	Toast.LENGTH_SHORT).show();
+				/*String str = (String) msg.obj;
 
 				if (!str.equals("")) {
 					if (str.contains(",")) {
@@ -59,11 +61,9 @@ public class AddDealPageActivity extends BaseActivity implements
 						sendSMS(str, generateSMSMessage());
 					}
 				}
-
-				AddDealPageActivity.this.finish();
+				AddDealPageActivity.this.finish();*/
 			} else {
-				Toast.makeText(AddDealPageActivity.this, "添加失败",
-						Toast.LENGTH_SHORT).show();
+				Toast.makeText(AddDealPageActivity.this, "添加失败",	Toast.LENGTH_SHORT).show();
 			}
 			super.handleMessage(msg);
 		}
@@ -74,6 +74,7 @@ public class AddDealPageActivity extends BaseActivity implements
 		// TODO Auto-generated method stub
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.add_deal_page);
+		YJWControler.getInstance().setActivity(this);
 		init();
 	}
 	@Override
@@ -83,9 +84,10 @@ public class AddDealPageActivity extends BaseActivity implements
 	}
 	private boolean checkAllInfoFilled() {
 		return editTextFilled(title_edittext) && editTextFilled(refer_edittext)
-				&& editTextFilled(commission_edittext)
-				&& editTextFilled(details_edittext) && phones != null
-				&& phones.length != 0;
+				//&& editTextFilled(commission_edittext)
+				&& editTextFilled(details_edittext) //&& phones != null
+				//&& phones.length != 0
+				;
 	}
 
 	private boolean editTextFilled(EditText et) {
@@ -96,15 +98,14 @@ public class AddDealPageActivity extends BaseActivity implements
 	public void onClick(View v) {
 		switch (v.getId()) {
 		case R.id.bt_left:
-			this.finish();
+			//this.finish();
+			Util.startNewActivity(this, TestActivity.class, true);
 			break;
 		case R.id.bt_right:
 			if (checkAllInfoFilled()) {
-				send();
-			}
-			else
-				Toast.makeText(AddDealPageActivity.this, "信息不完整",
-						Toast.LENGTH_SHORT).show();
+				send();				
+			}else
+				Toast.makeText(AddDealPageActivity.this, "信息不完整",Toast.LENGTH_SHORT).show();
 			break;
 		case R.id.add_contant:
 			Intent intent = new Intent();
@@ -115,7 +116,7 @@ public class AddDealPageActivity extends BaseActivity implements
 		}
 	}
 
-	@Override
+	/*@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		switch (resultCode) {
 		case RESULT_OK:
@@ -129,28 +130,29 @@ public class AddDealPageActivity extends BaseActivity implements
 						added_text.setText(added_text.getText()+"\n"+phones[i]);
 			break;
 		default:
-			Toast.makeText(this, "error on activity result", Toast.LENGTH_SHORT)
-					.show();
+			Toast.makeText(this, "error on activity result", Toast.LENGTH_SHORT).show();
 			break;
 		}
-	}
+	}*/
 
-	// ugly codes
-	@SuppressLint({ "Hansk", "HandlerLeak", "HandlerLeak", "HandlerLeak" })
+	//@SuppressLint({ "Hansk", "HandlerLeak", "HandlerLeak", "HandlerLeak" })
 	private void send() {
-		String title = title_edittext.getText().toString();
-		Date date = new Date(datepicker.getYear(), datepicker.getMonth(),
-				datepicker.getDayOfMonth());
-		String refer = refer_edittext.getText().toString();
-		String commission = commission_edittext.getText().toString();
-		String detail = details_edittext.getText().toString();
-		AddDealThread thread = new AddDealThread(YJWActivity.user.getSid(),
-				title, "", refer, commission, date, detail, phones,
-				confirm_checkbox.isChecked());
+		DealBean bean=new DealBean();
+		bean.setOwner_id(YJWActivity.user.getId());
+		bean.setTitle(title_edittext.getText().toString());
+		bean.setexpire_date(new Date(datepicker.getYear(), datepicker.getMonth(),datepicker.getDayOfMonth()));
+		bean.setFee(Float.valueOf(refer_edittext.getText().toString()));
+		//bean.setCommission((Float)null);
+		//bean.setCommission(Float.valueOf(commission_edittext.getText().toString()));
+		bean.setContent(details_edittext.getText().toString());
+			
+		AddDealThread thread = new AddDealThread();
+		thread.setBean(bean);
 		thread.setHandler(handler);
-		new Thread(thread).start();
+		thread.start();
 	}
 
+	@Override
 	protected void init() {
 		super.init();
 	}

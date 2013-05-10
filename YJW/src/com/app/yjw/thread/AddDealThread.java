@@ -1,27 +1,31 @@
 package com.app.yjw.thread;
 
-import java.util.Date;
-import java.util.LinkedList;
-import java.util.List;
-
-import org.apache.http.message.BasicNameValuePair;
-
-import android.os.Looper;
-import android.os.Message;
-import android.util.Log;
-
 import com.app.yjw.net.NetworkConstants;
-import com.app.yjw.net.NetworkFactory;
-import com.app.yjw.pojo.DealInfo;
-import com.yjw.bean.UnregisteredPhoneList;
+import com.app.yjw.util.YJWMessage;
 
 public class AddDealThread extends YJWBaseThread {
 
-	private DealInfo deal;
+	@Override
+	protected String generateURL() {
+		return NetworkConstants.URL_ADDDEAL;
+	}
+
+	@Override
+	protected void init() {
+				
+	}
+	
+	@Override
+	protected void OnSuccess() {
+		msg.what=YJWMessage.ADD_DEAL_SUCCESS.ordinal();
+		super.OnSuccess();
+	}
+
+/*	private DealInfo deal;
 	private String[] phones;
 	private boolean shouldConfirm;
 
-	public AddDealThread(String sid, String title, String content,
+	public AddDealThread(int Id, String title, String content,
 			String refer, String commission, Date date, String details,
 			String[] _phones, boolean sc) {
 		deal = new DealInfo();
@@ -29,7 +33,7 @@ public class AddDealThread extends YJWBaseThread {
 		deal.setDate(date);
 		deal.setReferFee(refer);
 		deal.setCommissionFee(commission);
-		deal.setCreator(sid);
+	//	deal.setCreator(sid);
 		deal.setDetails(details);
 		phones = _phones;
 		shouldConfirm = sc;
@@ -39,7 +43,7 @@ public class AddDealThread extends YJWBaseThread {
 	public void run() {
 		String phoneStr = ((UnregisteredPhoneList) NetworkFactory.getInstance()
 				.doPostObject(generateURL(), generateParameters(),true)).phoneList;
-		Message msg = Message.obtain();
+		msg = Message.obtain();
 		Log.d("Unregistered Phone", phoneStr);
 		if (phoneStr.equals(""))
 		{
@@ -49,7 +53,7 @@ public class AddDealThread extends YJWBaseThread {
 			msg.what = 1;
 			msg.obj = phoneStr;
 		}
-		this.sendMessage(msg);
+		this.sendMessage();
 
 	}
 
@@ -81,4 +85,10 @@ public class AddDealThread extends YJWBaseThread {
 	protected String generateURL() {
 		return NetworkConstants.URL_ADDDEAL;
 	}
+
+	@Override
+	protected void init() {
+		// TODO Auto-generated method stub
+		
+	}*/
 }

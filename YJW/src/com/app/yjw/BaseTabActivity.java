@@ -6,14 +6,16 @@ import android.content.Intent;
 import android.os.Handler;
 import android.widget.EditText;
 
-import com.app.yjw.thread.SyncDealThread;
-import com.app.yjw.thread.SyncDealThread.SyncType;
+import com.app.yjw.thread.SyncTransThread;
+import com.app.yjw.thread.SyncTransThread.SyncType;
+import com.app.yjw.util.BeanPacker;
+import com.yjw.bean.GetInfoBean;
 
 public class BaseTabActivity extends Activity {
 
 	protected ProgressDialog loadingDialog;
 
-	protected SyncDealThread syt;
+	protected SyncTransThread syt;
 	protected EditText search_edittext;
 
 	protected void jump(Class<?> cls) {
@@ -36,12 +38,13 @@ public class BaseTabActivity extends Activity {
 	}
 
 	protected void initSyncThread(SyncType type, Handler handler) {
-		syt = new SyncDealThread(0, type);
+		syt = new SyncTransThread();
+		syt.setBean(new BeanPacker(YJWActivity.user).transTo(GetInfoBean.class));
 		syt.setHandler(handler);
 	}
 
 	protected void sync() {
-		new Thread(syt).start();
+		syt.start();
 	}
 
 	protected void hideLoadingDialog() {

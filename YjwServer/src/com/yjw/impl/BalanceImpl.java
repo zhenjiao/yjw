@@ -1,34 +1,30 @@
 package com.yjw.impl;
 
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
 import org.springframework.jdbc.core.JdbcTemplate;
 
 import com.yjw.dao.BalanceDAO;
-import com.yjw.sql.InformationSQL;
-import com.yjw.tool.GetJdbcTemplate;
+import com.yjw.sql.DealSQL;
+import com.yjw.tool.TemplateGetter;
 
 public class BalanceImpl implements BalanceDAO{
 	
 	private JdbcTemplate jdbcTemplate;
-	private InformationSQL sql;
+	private DealSQL sql;
 	
 	public BalanceImpl() {
-		this.jdbcTemplate = new GetJdbcTemplate().getJtl();
-		this.sql = new InformationSQL();
+		this.jdbcTemplate = TemplateGetter.getJtl();
+		this.sql = new DealSQL();
 	}
 
 	public float getBalance(String sid) {
-		// TODO Auto-generated method stub
-		List<Map<String, Object>> commission=this.jdbcTemplate.queryForList(sql.getCommission(sid));
+		/*// TODO Auto-generated method stub
+		List commission=this.jdbcTemplate.queryForList(sql.getCommission(sid));
 		//List fee=this.jdbcTemplate.queryForList(sql.getfee(sid));
 		float sumcom=0,sumfee=0;
-		Iterator<?> itc = commission.iterator();
+		Iterator itc = commission.iterator();
 		//Iterator itf = fee.iterator();
 		while(itc.hasNext()){
-			Map<String, Object> map = (Map<String, Object>) itc.next();
+			Map map = (Map) itc.next();
 			sumcom=sumcom+Float.parseFloat(map.get("commission").toString());
 		}
 		
@@ -37,7 +33,9 @@ public class BalanceImpl implements BalanceDAO{
 			sumfee=sumfee+Float.parseFloat(map.get("fee").toString());
 		}*/
 			
-		return sumfee;//sumcom-sumfee;
+		//return sumfee;//sumcom-sumfee;
+		return 0;
+		
 	}
 
 }

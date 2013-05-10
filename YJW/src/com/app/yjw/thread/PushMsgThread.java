@@ -6,7 +6,6 @@ import java.util.List;
 import org.apache.http.message.BasicNameValuePair;
 
 import android.os.Handler;
-import android.os.Looper;
 import android.os.Message;
 
 import com.app.yjw.YJWActivity;
@@ -38,26 +37,26 @@ public class PushMsgThread extends YJWBaseThread {
 		this.to_user = to;
 	}
 
+	@Override
 	public void run() {
 		String backStr = NetworkFactory.getInstance().doPost(
 				generateURL(), generateParameters(),false);
 		
 		if(backStr!=null){
-			Message msg = Message.obtain();
+			msg = Message.obtain();
 			// send message
 			if (!backStr.equals("success"))
-				msg.what = YJWMessage.SEND_MESSAGE_FAILURE;
+				msg.what = YJWMessage.SEND_MESSAGE_FAILURE.ordinal();
 			else
-				msg.what = YJWMessage.SEND_MESSAGE_SUCCESS;
-			this.sendMessage(msg);
+				msg.what = YJWMessage.SEND_MESSAGE_SUCCESS.ordinal();
+			sendMessage();
 		}
 	}
 
 	@Override
 	protected List<BasicNameValuePair> generateParameters() {
 		List<BasicNameValuePair> parameters = new ArrayList<BasicNameValuePair>();
-		parameters
-				.add(new BasicNameValuePair("sid", YJWActivity.user.getSid()));
+		parameters.add(new BasicNameValuePair("sid", YJWActivity.user.getId().toString()));
 		parameters.add(new BasicNameValuePair("to_user", to_user));
 		parameters.add(new BasicNameValuePair("content", chat.getMsg()));
 		parameters.add(new BasicNameValuePair("deal_id", deal.getId()));
@@ -68,5 +67,11 @@ public class PushMsgThread extends YJWBaseThread {
 	@Override
 	protected String generateURL() {
 		return NetworkConstants.URL_CHAT;
+	}
+
+	@Override
+	protected void init() {
+		// TODO Auto-generated method stub
+		
 	}
 }

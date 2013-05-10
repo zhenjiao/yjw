@@ -20,7 +20,6 @@ public class ClientTest {
 			PrintWriter pw = new  PrintWriter(bw,true);
 			
 			pw.append("Wo lo haha!!");
-			socket.close();
 			
 		} catch (UnknownHostException e) {
 			// TODO Auto-generated catch block
@@ -29,6 +28,5 @@ public class ClientTest {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-
 	}
 }

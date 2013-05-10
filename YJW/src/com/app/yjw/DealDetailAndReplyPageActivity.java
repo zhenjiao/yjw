@@ -71,24 +71,24 @@ public class DealDetailAndReplyPageActivity extends BaseActivity implements
 	private Handler handler = new Handler() {
 		@Override
 		public void handleMessage(Message msg) {
-			switch (msg.what) {
-			case YJWMessage.GET_SHARED_USER_FAILURE:
+			switch (YJWMessage.values()[msg.what]) {
+			case GET_SHARED_USER_FAILURE:
 				Toast.makeText(DealDetailAndReplyPageActivity.this, "网络错误。请重试",
 						Toast.LENGTH_SHORT).show();
 				break;
-			case YJWMessage.GET_SHARED_USER_NONE:
+			case GET_SHARED_USER_NONE:
 				Toast.makeText(DealDetailAndReplyPageActivity.this, "暂无",
 						Toast.LENGTH_SHORT).show();
 				break;
-			case YJWMessage.SEND_MESSAGE_SUCCESS:
+			case SEND_MESSAGE_SUCCESS:
 				Toast.makeText(DealDetailAndReplyPageActivity.this, "发送消息成功",
 						Toast.LENGTH_SHORT).show();
 				break;
-			case YJWMessage.SEND_MESSAGE_FAILURE:
+			case SEND_MESSAGE_FAILURE:
 				Toast.makeText(DealDetailAndReplyPageActivity.this, "发送消息失败",
 						Toast.LENGTH_SHORT).show();
 				break;
-			case YJWMessage.GET_MESSAGE_SUCCESS:
+			case GET_MESSAGE_SUCCESS:
 				/*
 				 * adding the message to Database and the list then nofity the
 				 * change
@@ -103,8 +103,8 @@ public class DealDetailAndReplyPageActivity extends BaseActivity implements
 				msgList.addAll(chatList);
 				adapter.notifyDataSetChanged();
 				break;
-			case YJWMessage.GET_MESSAGE_NULL:
-			case YJWMessage.GET_MESSAGE_FAILURE:
+			case GET_MESSAGE_NULL:
+			case GET_MESSAGE_FAILURE:
 				break;
 			}
 		}
@@ -124,6 +124,7 @@ public class DealDetailAndReplyPageActivity extends BaseActivity implements
 		super.onResume();
 		ShowMessageThread.SetCurrentContext(this);
 	}
+	@Override
 	protected void initViews() {
 
 		back_button = (Button) findViewById(R.id.bt_left);
@@ -144,6 +145,7 @@ public class DealDetailAndReplyPageActivity extends BaseActivity implements
 		chatlistview.setDividerHeight(0);
 	}
 
+	@Override
 	protected void init() {
 
 		initViews();
@@ -212,7 +214,7 @@ public class DealDetailAndReplyPageActivity extends BaseActivity implements
 	private void receivedMessage() {
 		MainPageActivity.msgThread.setMode(PullMsgThread.Mode.Displaying);
 		MainPageActivity.msgThread.setDisplayDealId(current_deal.getId());
-		MainPageActivity.msgThread.setDisplayHandler(this.handler);
+		MainPageActivity.msgThread.setHandler(handler);
 		MainPageActivity.msgThread.setChatUser(toUserPhone);
 	}
 
@@ -220,7 +222,7 @@ public class DealDetailAndReplyPageActivity extends BaseActivity implements
 	protected void onStop() {
 		MainPageActivity.msgThread.setMode(PullMsgThread.Mode.Running);
 		MainPageActivity.msgThread.setDisplayDealId(null);
-		MainPageActivity.msgThread.setDisplayHandler(null);
+		MainPageActivity.msgThread.setHandler(null);
 		MainPageActivity.msgThread.setChatUser(null);
 		super.onStop();
 	}

@@ -6,7 +6,6 @@ import java.util.List;
 import org.apache.http.message.BasicNameValuePair;
 
 import android.os.Handler;
-import android.os.Looper;
 import android.os.Message;
 
 import com.app.yjw.YJWActivity;
@@ -29,12 +28,12 @@ public class ForwardDealThread extends YJWBaseThread {
 		String str = NetworkFactory.getInstance().doPost(
 				generateURL(), generateParameters(),false);
 		if(str!=null){
-			Message msg = Message.obtain();
+			msg = Message.obtain();
 			if (str.equals("success"))
 				msg.what = 1;
 			else
 				msg.what = 0;
-			this.sendMessage(msg);
+			this.sendMessage();
 		}
 	}
 
@@ -42,7 +41,7 @@ public class ForwardDealThread extends YJWBaseThread {
 	protected List<BasicNameValuePair> generateParameters() {
 		List<BasicNameValuePair> parameters = new LinkedList<BasicNameValuePair>();
 		parameters
-				.add(new BasicNameValuePair("sid", YJWActivity.user.getSid()));
+				.add(new BasicNameValuePair("sid", YJWActivity.user.getId().toString()));
 		parameters.add(new BasicNameValuePair("dealid", deal_id));
 		String phone_str = "";
 		for (int i = 0; i < phones.length; ++i)
@@ -59,6 +58,12 @@ public class ForwardDealThread extends YJWBaseThread {
 	@Override
 	protected String generateURL() {
 		return NetworkConstants.URL_FORWARD;
+	}
+
+	@Override
+	protected void init() {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

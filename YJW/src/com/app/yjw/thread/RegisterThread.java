@@ -1,128 +1,38 @@
 package com.app.yjw.thread;
 
 import java.util.ArrayList;
-import android.util.Log;
 import java.util.List;
 
 import org.apache.http.message.BasicNameValuePair;
 
-import android.os.Looper;
-import android.os.Message;
-
 import com.app.yjw.net.NetworkConstants;
-import com.app.yjw.net.NetworkFactory;
+import com.app.yjw.util.ErrorCode;
 import com.app.yjw.util.YJWMessage;
 
 public class RegisterThread extends YJWBaseThread {
 
-	public enum RegisterStep {
-		Register, SendValidateCode, ResendValidateCode, FinishRegister
+	public enum RegisterStep {getValidateCode, Register};
+	
+	private RegisterStep currentStep = RegisterStep.getValidateCode;
+	private String cellphone;
+	
+	public void setCellphone(String cellphone){
+		this.cellphone=cellphone;
 	}
-
-	private RegisterStep currentStep = RegisterStep.Register;
-	private String phoneNumber;
-	private String realname;
-	private String password;
-	private String validateCode;
-	private String sid;
-
-	public void setStep(RegisterStep step) {
-		this.currentStep = step;
-	}
-
-	public String getPhoneNumber() {
-		return phoneNumber;
-	}
-
-	public void setPhoneNumber(String phoneNumber) {
-		this.phoneNumber = phoneNumber;
-	}
-
-	public String getRealname() {
-		return realname;
-	}
-
-	public void setRealname(String name) {
-		this.realname = name;
-	}
-
-	public String getPassword() {
-		return password;
-	}
-
-	public void setPassword(String password) {
-		this.password = password;
-	}
-
-	public String getValidateCode() {
-		return validateCode;
-	}
-
-	public void setValidateCode(String validateCode) {
-		this.validateCode = validateCode;
-	}
-
-	public String getSid() {
-		return sid;
-	}
-
-	public void setSid(String sid) {
-		this.sid = sid;
-	}
-
-	@Override
-	public void run() {
-		String backStr = NetworkFactory.getInstance().doPost(generateURL(), generateParameters(),false);
-		//String backStr = NetworkFactory.getInstance().doGet(generateURL(), generateParameters());
-		
-		if(backStr!=null){
-			Log.d("result of registration = ", backStr);
-			Message msg = Message.obtain();
-			switch(currentStep){
-			case Register:
-				sid = backStr.substring(0, backStr.indexOf(","));
-				msg.what = YJWMessage.REGISTER_SUCCESS;
-				break;
-			case SendValidateCode:
-				if(backStr.equals("fail"))
-				{
-					msg.what = YJWMessage.REGISTER_FAILURE;
-				}
-				else
-				{
-					msg.what = YJWMessage.REGISTER_SUCCESS;
-				}
-				break;
-			case FinishRegister:
-				msg.what = YJWMessage.REGISTER_SUCCESS;
-				break;
-			}
-			handler.sendMessage(msg);
-		}
-		else
-		{
-			Log.d("Trace", "result of registration is null");
-		}
+	public void setStep(RegisterStep currentStep){
+		this.currentStep=currentStep;
 	}
 
 	@Override
 	protected List<BasicNameValuePair> generateParameters() {
-		List<BasicNameValuePair> parameters = new ArrayList<BasicNameValuePair>();
+		List<BasicNameValuePair> parameters = null;
 		switch (currentStep) {
+		case getValidateCode:
+			parameters = new ArrayList<BasicNameValuePair>();
+			parameters.add(new BasicNameValuePair("cellphone", cellphone));
+			break;			
 		case Register:
-			parameters.add(new BasicNameValuePair("cellphone", phoneNumber));
-			break;
-		case SendValidateCode:
-			parameters.add(new BasicNameValuePair("sid", sid));
-			parameters
-					.add(new BasicNameValuePair("validateCode", validateCode));
-			break;
-		case ResendValidateCode:
-			break;
-		case FinishRegister:
-			parameters.add(new BasicNameValuePair("sid", sid));
-			parameters.add(new BasicNameValuePair("password", password));
-			parameters.add(new BasicNameValuePair("name", realname));
+			parameters=super.generateParameters();
 			break;
 		}
 		return parameters;
@@ -132,20 +42,29 @@ public class RegisterThread extends YJWBaseThread {
 	protected String generateURL() {
 		String url = null;
 		switch (currentStep) {
-		case Register:
-			url = NetworkConstants.URL_REGISTER;
-			break;
-		case SendValidateCode:
-			url = NetworkConstants.URL_REGISTERVALIDATE;
-			break;
-		case ResendValidateCode:
-			url = NetworkConstants.URL_RESENDVALIDATE;
-			break;
-		case FinishRegister:
-			url = NetworkConstants.URL_FINISHREGISTER;
-			break;
+		case getValidateCode:url = NetworkConstants.URL_VALIDATECODE;break;
+		case Register:	url = NetworkConstants.URL_REGISTER;	break;
 		}
 		return url;
 	}
 
+	@Override
+	protected void init() {
+		RegisterError(ErrorCode.E_DUBLICATE_ID, YJWMessage.REGISTER_FAILURE, "已经注册的账号");
+		RegisterError(ErrorCode.E_INVALIDATE_FAILED, YJWMessage.REGISTER_FAILURE, "验证失败");
+	}
+
+	@Override
+	protected void OnSuccess() {
+		switch(currentStep){
+		case getValidateCode:{
+			msg.what = YJWMessage.REGISTER_GETVALIDATECODE.ordinal();
+			msg.obj=back[1];
+		}break;
+		case Register:{
+			msg.what = YJWMessage.REGISTER_SUCCESS.ordinal();
+		}break;		
+		}
+		super.OnSuccess();
+	}
 }

@@ -24,9 +24,8 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
   
   <body>
          <form action="SyncDealAction" method="post">
- sid:<input type="text" name="sid"/>
-pageIndex<input type="text" name="pageIndex"/>
+ sid:<input type="text" name="sid"/></br>
+pageIndex<input type="text" name="pageIndex"/></br>
  <input type="submit">
- </form>
   </body>
 </html>

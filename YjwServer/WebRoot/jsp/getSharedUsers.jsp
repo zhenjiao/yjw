@@ -28,12 +28,11 @@
 		<form action="GetDealSharedUsersAction" method="post">
 			sid:
 			<input type="text" name="sid" />
-			
+			</br>
 			dealId：
 			<input type="text" name="dealId" />
-			
+			</br>
 
 			<input type="submit">
-			</form>
 	</body>
 </html>

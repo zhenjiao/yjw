@@ -7,7 +7,6 @@ import android.app.Notification;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.TabActivity;
-import android.content.ContentValues;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -21,12 +20,13 @@ import android.widget.RadioButton;
 import android.widget.TabHost;
 
 import com.app.yjw.database.DBStatic;
-import com.app.yjw.pojo.MsgInfo;
 import com.app.yjw.thread.PullMsgThread;
 import com.app.yjw.thread.ShowMessageThread;
-import com.app.yjw.thread.ThreadController;
-import com.app.yjw.util.Utility;
+import com.app.yjw.util.BeanPacker;
+import com.app.yjw.util.Util;
 import com.app.yjw.util.YJWMessage;
+import com.yjw.bean.ChatBean;
+import com.yjw.bean.MessageBean;
 
 
 public class MainPageActivity extends TabActivity implements OnClickListener {
@@ -37,45 +37,48 @@ public class MainPageActivity extends TabActivity implements OnClickListener {
 	private Intent mReferredDealPageIntent;
 	private Intent mSettingsPageIntent;
 	private RadioButton[] mRadioButton = new RadioButton[4];
+	private NotificationManager notificationManager;
+	private int notification_id = 523121325;
+	
+	public static PullMsgThread msgThread;	
+	static private MainPageActivity instance = null;
+	static private MainPageActivity getInstance(){return instance;}
+	
 
-	private Handler mainHandler = new Handler() {
+	static private Handler mainHandler = new Handler() {
 		@Override
 		public void handleMessage(Message msg) {
-			switch (msg.what) {
-			case YJWMessage.GET_MESSAGE_NULL:
+			switch (YJWMessage.values()[msg.what]) {
+			case GET_MESSAGE_NULL:
 				Log.d("msg", "null");
 				break;
-			case YJWMessage.GET_MESSAGE_SUCCESS:
+			case GET_MESSAGE_SUCCESS:
 				@SuppressWarnings("unchecked")
-				List<MsgInfo> chatList = (List<MsgInfo>) msg.obj;
-				for (MsgInfo chat : chatList) {
-					ContentValues cv = new ContentValues();
-					cv.put("dealid", chat.getDealId());
-					cv.put("type", "from");
-					cv.put("msg", chat.getMsg());
-					YJWActivity.database.insert(DBStatic.MessageTableName,
-							null, cv);
-					showNotification(R.drawable.about_ooxx, chat);
+				List<ChatBean> chatList = (List<ChatBean>)msg.obj;
+				for (ChatBean chat : chatList) {
+					MessageBean bean = (MessageBean)new BeanPacker(chat).transTo(MessageBean.class);
+					bean.setType(MessageBean.MsgType.from);
+					//YJWActivity.database.insert(DBStatic.MessageTableName,	null, cv);
+					YJWActivity.database.execSQL(new BeanPacker(bean).insert(DBStatic.MessageTableName));
+					getInstance().showNotification(R.drawable.about_ooxx, chat);
 				}
 				break;
-			case YJWMessage.GET_MESSAGE_FAILURE:
-				Log.d("msg", "shibai");
+			case GET_MESSAGE_FAILURE:
+				Log.d("msg", "fail");
 				break;
 			}
 		}
 	};
-
-	public static PullMsgThread msgThread = new PullMsgThread();
-	public static Thread BackgroundThread = new Thread(msgThread);
 	
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+		instance = this;
 		this.setContentView(R.layout.main_page);
 		this.init();
-		notificationManager = (NotificationManager) getSystemService(NOTIFICATION_SERVICE);
-		Utility.CheckUpdate(this);
+		notificationManager = (NotificationManager)getSystemService(NOTIFICATION_SERVICE);
+		Util.CheckUpdate(this);
 	}
 
 	@Override
@@ -87,21 +90,18 @@ public class MainPageActivity extends TabActivity implements OnClickListener {
 	
 	private void init() {
 		// init buttons
-		mRadioButton[0] = (RadioButton) findViewById(R.id.main_tab_received);
-		mRadioButton[1] = (RadioButton) findViewById(R.id.main_tab_recommend);
-		mRadioButton[2] = (RadioButton) findViewById(R.id.main_tab_refer);
-		mRadioButton[3] = (RadioButton) findViewById(R.id.main_tab_settings);
+		mRadioButton[0] = (RadioButton)findViewById(R.id.main_tab_received);
+		mRadioButton[1] = (RadioButton)findViewById(R.id.main_tab_recommend);
+		mRadioButton[2] = (RadioButton)findViewById(R.id.main_tab_refer);
+		mRadioButton[3] = (RadioButton)findViewById(R.id.main_tab_settings);
 		for (int i = 0; i < 4; i++)
 			mRadioButton[i].setOnClickListener(this);
 		this.mHost = getTabHost();
 		// init intent
-		mReceivedDealPageIntent = new Intent(this,
-				ReceivedDealPageActivity.class);
-		mRecommendedDealPageIntent = new Intent(this,
-				RecommendedDealPageActivity.class);
-		mReferredDealPageIntent = new Intent(this,
-				ReferredDealPageActivity.class);
-		mSettingsPageIntent = new Intent(this, SettingsPageActivity.class);
+		mReceivedDealPageIntent = new Intent(this,ReceivedDealPageActivity.class);
+		mRecommendedDealPageIntent = new Intent(this,RecommendedDealPageActivity.class);
+		mReferredDealPageIntent = new Intent(this,ReferredDealPageActivity.class);
+		mSettingsPageIntent = new Intent(this,SettingsPageActivity.class);
 		// init tabs
 		this.mHost.addTab(buildTabSpec("tab-1",
 				R.string.main_received_deal_page, R.drawable.ic_dialog_time,
@@ -115,18 +115,14 @@ public class MainPageActivity extends TabActivity implements OnClickListener {
 		this.mHost.addTab(buildTabSpec("tab-4", R.string.main_settings_page,
 				R.drawable.ic_dialog_time, this.mSettingsPageIntent));
 
+		msgThread = new PullMsgThread(); 
 		msgThread.setMode(PullMsgThread.Mode.Running);
-		msgThread.setHandler(mainHandler);
-		//ThreadController.getInstance().addThread(msgThread);
-		ThreadController.getInstance().addThread(BackgroundThread);
-		
-		if (!BackgroundThread.isAlive())
-			BackgroundThread.start();
+		msgThread.setHandler(mainHandler);		
+		msgThread.start();
 		
 	}
 
-	private TabHost.TabSpec buildTabSpec(String tag, int resLabel, int resIcon,
-			final Intent content) {
+	private TabHost.TabSpec buildTabSpec(String tag, int resLabel, int resIcon,final Intent content) {
 		return this.mHost
 				.newTabSpec(tag)
 				.setIndicator(getString(resLabel),
@@ -142,6 +138,7 @@ public class MainPageActivity extends TabActivity implements OnClickListener {
 					.setMessage("确认退出？")
 					.setNegativeButton("No",
 							new DialogInterface.OnClickListener() {
+								@Override
 								public void onClick(DialogInterface dialog,
 										int which) {
 
@@ -149,11 +146,14 @@ public class MainPageActivity extends TabActivity implements OnClickListener {
 							})
 					.setPositiveButton("Yes",
 							new DialogInterface.OnClickListener() {
+								@Override
 								public void onClick(DialogInterface dialog,
 										int whichButton) {
 									finish();
 									YJWActivity.database.close();
-									ThreadController.getInstance().killAll();
+									//ThreadController.getInstance().killAll();
+									// TODO 应改为安全性更高的方法 
+									msgThread.stop();
 									System.exit(0);
 								}
 
@@ -165,18 +165,10 @@ public class MainPageActivity extends TabActivity implements OnClickListener {
 	@Override
 	public void onClick(View v) {
 		switch (v.getId()) {
-		case R.id.main_tab_received:
-			setRadioButtonCheck(0);
-			break;
-		case R.id.main_tab_recommend:
-			setRadioButtonCheck(1);
-			break;
-		case R.id.main_tab_refer:
-			setRadioButtonCheck(2);
-			break;
-		case R.id.main_tab_settings:
-			setRadioButtonCheck(3);
-			break;
+		case R.id.main_tab_received:setRadioButtonCheck(0);break;
+		case R.id.main_tab_recommend:setRadioButtonCheck(1);break;
+		case R.id.main_tab_refer:setRadioButtonCheck(2);break;
+		case R.id.main_tab_settings:setRadioButtonCheck(3);break;
 		}
 	}
 
@@ -192,16 +184,14 @@ public class MainPageActivity extends TabActivity implements OnClickListener {
 		super.onStop();
 	}
 
-	private NotificationManager notificationManager;
-	private int notification_id = 523121325;
+	
 
 	/*
 	 * copy from internet
 	 */
-	public void showNotification(int icon, MsgInfo chat) {
+	public void showNotification(int icon, ChatBean chat) {
 		// Notification管理器
-		Notification notification = new Notification(icon, "佣金王",
-				System.currentTimeMillis());
+		Notification notification = new Notification(icon, "佣金王",	System.currentTimeMillis());
 		// 后面的参数分别是显示在顶部通知栏的小图标，小图标旁的文字（短暂显示，自动消失）系统当前时间（不明白这个有什么用）
 		notification.defaults = Notification.DEFAULT_SOUND;
 		// 这是设置通知是否同时播放声音或振动，声音为Notification.DEFAULT_SOUND
@@ -212,10 +202,10 @@ public class MainPageActivity extends TabActivity implements OnClickListener {
 		Intent intent = new Intent();
 		intent.setClass(this, DealReplyPageActivity.class);
 		intent.putExtra("from", this.getClass().toString());
-		intent.putExtra("deal_id", chat.getDealId());
+		intent.putExtra("deal_id", chat.getDeal());
 		PendingIntent pt = PendingIntent.getActivity(this, 0, intent, 0);
 		// 点击通知后的动作
-		notification.setLatestEventInfo(this, "xxx发来消息", chat.getMsg(), pt);
+		notification.setLatestEventInfo(this, "xxx发来消息", chat.getContent(), pt);
 		notificationManager.notify(notification_id, notification);
 	}
 }

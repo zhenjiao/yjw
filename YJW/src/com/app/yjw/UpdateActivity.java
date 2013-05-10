@@ -2,18 +2,15 @@ package com.app.yjw;
 
 
 
-import com.app.yjw.thread.ShowMessageThread;
-
 import android.annotation.SuppressLint;
 import android.os.Bundle;
-import android.os.Handler;
-import android.os.Message;
 import android.view.Menu;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.ProgressBar;
-import android.widget.TextView;
+
+import com.app.yjw.thread.ShowMessageThread;
 
 
 
@@ -36,13 +33,17 @@ public class UpdateActivity extends BaseActivity  implements OnClickListener,Run
 	      super.handleMessage(msg);
 	    }
 	  };*/
-    public void onCreate(Bundle savedInstanceState) {
+	
+	/**启动等待界面*/
+    @Override
+	public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_update);
-        init(); 
+        init();
         new Thread(this).start();
     }
 
+@Override
 protected void init() {
 		// TODO Auto-generated method stub
     	super.init();
@@ -80,6 +81,7 @@ protected void init() {
 		//tview.setText(20+"%");
 	}
 
+	/** 不用线程保护么*/
 	@SuppressLint("ParserError")
 	@SuppressWarnings("static-access")
 	@Override
@@ -88,7 +90,7 @@ protected void init() {
 		
 		while(!this.isend){
 			if(filesize == 0) continue;
-			int	result = (int)(downLoadFileSize * 100 / filesize+1);
+			int	result = (downLoadFileSize * 100 / filesize+1);
             myBar.setProgress(result);
            // myBar.setTag(result);
             //sendMsg(result);

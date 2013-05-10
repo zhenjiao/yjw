@@ -1,30 +1,26 @@
 package com.yjw.servlet;
 
-import java.io.ByteArrayOutputStream;
 import java.io.IOException;
-import java.io.ObjectOutputStream;
 import java.io.PrintWriter;
-import java.io.Serializable;
-import java.util.ArrayList;
 
 import javax.servlet.ServletException;
-import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.json.JSONObject;
-
 import com.yjw.bean.DealBean;
-import com.yjw.bean.TestObject;
-import com.yjw.bean.UnregisteredPhoneList;
-import com.yjw.proxy.DealProxy;
-import com.yjw.tool.GenerateTool;
+import com.yjw.bean.TransBean;
+import com.yjw.dao.EntityDAO;
+import com.yjw.impl.DealImpl;
+import com.yjw.impl.TransImpl;
+import com.yjw.tool.BeanPacker;
+import com.yjw.tool.ErrorCode;
 
 public class AddDealAction extends HttpServlet {
 	
-	private DealProxy dealProxy;
-	private GenerateTool generateTool;
+	private EntityDAO dealDao;
+	private EntityDAO transDao;
+	//private GenerateTool generateTool;
 	/**
 	 * Constructor of the object.
 	 */
@@ -35,6 +31,7 @@ public class AddDealAction extends HttpServlet {
 	/**
 	 * Destruction of the servlet. <br>
 	 */
+	@Override
 	public void destroy() {
 		super.destroy(); // Just puts "destroy" string in log
 		// Put your code here
@@ -54,54 +51,37 @@ public class AddDealAction extends HttpServlet {
 	 * @throws IOException
 	 *             if an error occurred
 	 */
+	@Override
 	public void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-
 		response.setContentType("text/html");
 		request.setCharacterEncoding("UTF-8");
 		response.setCharacterEncoding("UTF-8");
-		//PrintWriter out = response.getWriter();
-		ServletOutputStream out = response.getOutputStream();
-		String sid = request.getParameter("sid");
-		
-		// 获取需要分享的电话号码信息
-		String phoneNumber = request.getParameter("phoneToShare");
-		ArrayList<String> list = generateTool.getPhoneNumberList(phoneNumber);
-		
-		// 获取Deal的信息
-		DealBean dealBean = new DealBean();
-		dealBean.setTitle(request.getParameter("title"));
-		dealBean.setContent(request.getParameter("content"));
-		dealBean.setFee(Float.parseFloat(request.getParameter("fee")));
-		//dealBean.setCommission(Float.parseFloat(request.getParameter("commission")));
-		
-		dealBean.setexpire_date(generateTool.StringToDate(request.getParameter("expire_date")));
-		
-		
-		String reqConfirm = request.getParameter("reqConfirm");
-		dealBean.setReq_confirm(reqConfirm);
-		UnregisteredPhoneList object = new UnregisteredPhoneList();
-		String temp=dealProxy.check(list);
-		object.phoneList=temp;
-		byte[] bytData = new byte[] {};
-		System.out.println(dealBean.getTitle());
-	
-		try {
-			int user_id = new GenerateTool().getUserId(sid);
-			dealBean.setUser_id(user_id);
-
-			if(dealProxy.addDeal(dealBean,list,reqConfirm)){
-				System.out.print("success");
-				
+		PrintWriter out = response.getWriter();
+		//ServletOutputStream out = response.getOutputStream();
+		BeanPacker packer = new BeanPacker(request.getParameter("bean"));
+		int deal_id;
+		if ((deal_id=dealDao.add(packer))>0){
+			out.print(ErrorCode.E_SUCCESS);
+			out.print("&");
+			DealBean d=(DealBean)packer.getBean();
+			TransBean t=new TransBean();
+			t.setDeal_id(deal_id);
+			t.setFrom_id(d.getOwner_id());
+			t.setTo_id(d.getOwner_id());
+			t.setConfirmed(1);
+			if(transDao.add(new BeanPacker(t))>0){
+				out.print(ErrorCode.E_SUCCESS);
 			}else{
-				System.out.print("fail");
+				out.print(ErrorCode.E_ADD_TRANS_FAILED);
 			}
-			bytData = getBytesFromObject(object);
-		} catch (Exception e) {
-			// TODO: handle exception
-			out.print("Problem on Database");
+		}else{
+			out.print(ErrorCode.E_ADD_DEAL_FAILED);
 		}
-		out.write(bytData);
+		out.print("&");
+		//添加完业务后添加相应的分享
+		
+		
 		out.flush();
 		out.close();
 	}
@@ -121,6 +101,7 @@ public class AddDealAction extends HttpServlet {
 	 * @throws IOException
 	 *             if an error occurred
 	 */
+	@Override
 	public void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 
@@ -133,13 +114,14 @@ public class AddDealAction extends HttpServlet {
 	 * @throws ServletException
 	 *             if an error occurs
 	 */
+	@Override
 	public void init() throws ServletException {
 		// Put your code here
-		this.dealProxy = new DealProxy();
-		this.generateTool = new GenerateTool();
+		dealDao=new DealImpl();
+		transDao=new TransImpl();
 	}
 	
-	public static byte[] getBytesFromObject(Serializable obj) throws Exception {
+	/*public static byte[] getBytesFromObject(Serializable obj) throws Exception {
         if (obj == null) {
             return null;
         }
@@ -147,6 +129,6 @@ public class AddDealAction extends HttpServlet {
         ObjectOutputStream oo = new ObjectOutputStream(bo);
         oo.writeObject(obj);
         return bo.toByteArray();
-	}
+	}*/
 
 }

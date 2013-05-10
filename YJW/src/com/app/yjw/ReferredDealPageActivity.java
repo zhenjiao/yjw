@@ -3,13 +3,6 @@ package com.app.yjw;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.app.yjw.database.DBProxy;
-import com.app.yjw.pojo.DealInfo;
-import com.app.yjw.thread.ShowMessageThread;
-import com.app.yjw.thread.SyncDealThread.SyncType;
-import com.app.yjw.widget.DealListView;
-import com.app.yjw.widget.DealListView.DealListAdapter;
-
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -17,11 +10,17 @@ import android.os.Message;
 import android.view.KeyEvent;
 import android.view.View;
 import android.view.View.OnClickListener;
-import android.widget.AdapterView.OnItemClickListener;
 import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemClickListener;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
+
+import com.app.yjw.pojo.DealInfo;
+import com.app.yjw.thread.ShowMessageThread;
+import com.app.yjw.thread.SyncTransThread.SyncType;
+import com.app.yjw.widget.DealListView;
+import com.app.yjw.widget.DealListView.DealListAdapter;
 
 public class ReferredDealPageActivity extends BaseTabActivity implements
 		OnClickListener, OnItemClickListener {
@@ -47,7 +46,7 @@ public class ReferredDealPageActivity extends BaseTabActivity implements
 				for(DealInfo deal : deal_list)
 					deal.isCreator = true;
 				// TODO ≤Â»Î ˝æ›ø‚
-				DBProxy.insertDeals(deal_list,"FWD");
+				//DBProxy.insertDeals(deal_list,"FWD");
 				adapter.notifyDataSetChanged();
 				break;
 			case -1:

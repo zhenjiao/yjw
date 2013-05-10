@@ -8,16 +8,14 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.json.JSONObject;
-
-import com.yjw.proxy.DealProxy;
-import com.yjw.proxy.InformationProxy;
-import com.yjw.tool.GenerateTool;
+import com.yjw.dao.EntityDAO;
+import com.yjw.impl.DealImpl;
+import com.yjw.tool.BeanPacker;
+import com.yjw.tool.ErrorCode;
 
 public class GetDealAction extends HttpServlet {
 	
-	private InformationProxy proxy;
-	private DealProxy dealProxy;
+	private EntityDAO dealDao;
 	/**
 	 * Constructor of the object.
 	 */
@@ -28,6 +26,7 @@ public class GetDealAction extends HttpServlet {
 	/**
 	 * Destruction of the servlet. <br>
 	 */
+	@Override
 	public void destroy() {
 		super.destroy(); // Just puts "destroy" string in log
 		// Put your code here
@@ -43,6 +42,7 @@ public class GetDealAction extends HttpServlet {
 	 * @throws ServletException if an error occurred
 	 * @throws IOException if an error occurred
 	 */
+	@Override
 	public void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 
@@ -50,29 +50,17 @@ public class GetDealAction extends HttpServlet {
 		request.setCharacterEncoding("UTF-8");
 		response.setCharacterEncoding("UTF-8");
 		PrintWriter out = response.getWriter();
-		String sid = request.getParameter("sid");
-		int user_id = new GenerateTool().getUserId(sid);
-		
-		String dealType = request.getParameter("dealType");
-		int pageIndex = Integer.parseInt(request.getParameter("pageIndex"));
-		
-		if(dealType.equals("REC")){
-			proxy = new InformationProxy(InformationProxy._RECEIVED_DEAL);
-			JSONObject object = proxy.getInformation(user_id, pageIndex);
-			out.print(object);
-		}else if(dealType.equals("PUB")){
-			proxy = new InformationProxy(InformationProxy._PUBLISHED_DEAL);
-			JSONObject object = proxy.getInformation(user_id, pageIndex);
-			//JSONObject object = dealProxy.syncDeal(user_id, pageIndex);
-			out.print(object);
-			
-		}else if(dealType.equals("FRW")){
-			proxy = new InformationProxy(InformationProxy._FORWORD_DEAL);
-			JSONObject object = proxy.getInformation(user_id, pageIndex);
-			out.print(object);
-			
-		}
-		
+		 
+		int size=Integer.valueOf(request.getParameter("size"));
+		out.print(ErrorCode.E_SUCCESS);
+		for (Integer i=0;i<size;++i){
+			int id = Integer.valueOf(request.getParameter(i.toString()));
+			BeanPacker packer=dealDao.get(id);
+			if (packer!=null){
+				out.print("&");			
+				out.print(packer);
+			}
+		}		
 		out.flush();
 		out.close();
 	}
@@ -87,20 +75,15 @@ public class GetDealAction extends HttpServlet {
 	 * @throws ServletException if an error occurred
 	 * @throws IOException if an error occurred
 	 */
+	@Override
 	public void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
-
 		this.doGet(request, response);
 	}
-
-	/**
-	 * Initialization of the servlet. <br>
-	 *
-	 * @throws ServletException if an error occurs
-	 */
+	
+	@Override
 	public void init() throws ServletException {
-		// Put your code here
-		this.dealProxy = new DealProxy();
+		dealDao=new DealImpl();
+		super.init();
 	}
-
 }

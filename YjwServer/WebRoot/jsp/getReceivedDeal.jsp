@@ -24,14 +24,13 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
   
   <body>
           <form action="GetDealAction" method="post">
-sid:<input type="text" name="sid"/>
-pageIndex:<input type="text" name="pageIndex"/>
+sid:<input type="text" name="sid"/></br>
+pageIndex:<input type="text" name="pageIndex"/></br>
 dealType:<select name="dealType">
 					<option value="REC">REC</option>
 					<option value="PUB">PUB</option>
 					<option value="FRW">FRW</option>
 </select><br>
  <input type="submit">
- </form>
   </body>
 </html>

@@ -20,5 +20,6 @@
     <string name="menu_settings">Settings</string>
     <string name="title_activity_ada">adaActivity</string>
     <string name="title_activity_update">UpdateActivity</string>
+    <string name="privacy_doc"><a href="http://www.baidu.com">使用条款和隐私政策</a></string>
 
 </resources>

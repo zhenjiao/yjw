@@ -23,7 +23,6 @@ public class MyServerTest {
 			String ssString = br.readLine();
 			
 			System.out.println("The message:"+ssString);
-			ss.close();
 		} catch (Exception e) {
 			// TODO: handle exception
 		}

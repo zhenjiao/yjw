@@ -10,12 +10,13 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.jdbc.core.JdbcTemplate;
 
-import com.yjw.bean.UserBean;
-import com.yjw.proxy.RegisterProxy;
-import com.yjw.tool.GetJdbcTemplate;
+import com.yjw.bean.AccountBean;
+import com.yjw.dao.RegisterDAO;
+import com.yjw.impl.RegisterImpl;
+import com.yjw.tool.BeanPacker;
 
 public class LoginAction extends HttpServlet {
-	private RegisterProxy proxy;
+	private RegisterDAO registerDao;
 	private JdbcTemplate jdbcTemplate;
 
 	/**
@@ -28,6 +29,7 @@ public class LoginAction extends HttpServlet {
 	/**
 	 * Destruction of the servlet. <br>
 	 */
+	@Override
 	public void destroy() {
 		super.destroy(); // Just puts "destroy" string in log
 		// Put your code here
@@ -47,6 +49,7 @@ public class LoginAction extends HttpServlet {
 	 * @throws IOException
 	 *             if an error occurred
 	 */
+	@Override
 	public void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 
@@ -57,14 +60,11 @@ public class LoginAction extends HttpServlet {
 		String msg = "";
 		
 		//准备数据
-		String cellphone = request.getParameter("cellphone");
-		String password = request.getParameter("password");
-		UserBean userBean = new UserBean();
-		userBean.setCellphone(cellphone);
-		userBean.setPassword(password);
-		
+		//String cellphone = request.getParameter("cellphone");
+		//String password = request.getParameter("password");
+		AccountBean bean = (AccountBean)new	BeanPacker(request.getParameter("bean")).getBean();		
 		//登录并接受返回信息
-		msg = proxy.logon(userBean);
+		msg = registerDao.logon(bean);
 		out.println(msg);
 		out.flush();
 		out.close();
@@ -85,6 +85,7 @@ public class LoginAction extends HttpServlet {
 	 * @throws IOException
 	 *             if an error occurred
 	 */
+	@Override
 	public void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 
@@ -97,10 +98,9 @@ public class LoginAction extends HttpServlet {
 	 * @throws ServletException
 	 *             if an error occurs
 	 */
-	public void init() throws ServletException {
-		// Put your code here
-		this.jdbcTemplate = new GetJdbcTemplate().getJtl();
-		this.proxy = new RegisterProxy(jdbcTemplate);
+	@Override
+	public void init() throws ServletException {	
+		this.registerDao = new RegisterImpl();
 	}
 
 }

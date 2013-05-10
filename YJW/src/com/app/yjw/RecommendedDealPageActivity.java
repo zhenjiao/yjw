@@ -20,7 +20,7 @@ import com.app.yjw.pojo.BaseUserInfo;
 import com.app.yjw.pojo.DealInfo;
 import com.app.yjw.pojo.ExpandDealInfo;
 import com.app.yjw.thread.ShowMessageThread;
-import com.app.yjw.thread.SyncDealThread.SyncType;
+import com.app.yjw.thread.SyncTransThread.SyncType;
 import com.app.yjw.widget.DealExpandListView;
 import com.app.yjw.widget.DealExpandListView.DealExpandListAdapter;
 

@@ -18,11 +18,11 @@ import org.apache.http.conn.ConnectTimeoutException;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 
-import com.app.yjw.imgtool.ImgTool;
-
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.util.Log;
+
+import com.app.yjw.imgtool.ImgTool;
 
 public class ImgNetManager {
 
@@ -152,7 +152,7 @@ public class ImgNetManager {
 			// fStream.close();
 			ds.flush();
 			/* È¡µÃResponseÄÚÈÝ */
-			System.out.println(con.getResponseMessage());
+			Log.d("ImgNetManager",con.getResponseMessage());
 			InputStream is = con.getInputStream();
 			int ch;
 			while ((ch = is.read()) != -1) {

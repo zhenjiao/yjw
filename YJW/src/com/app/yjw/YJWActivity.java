@@ -1,112 +1,88 @@
 package com.app.yjw;
 
-import java.util.ArrayList;
-import java.util.List;
-import org.apache.http.message.BasicNameValuePair;
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.content.Context;
-import android.content.DialogInterface;
-import android.content.Intent;
 import android.database.Cursor;
-import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo.State;
 import android.os.Bundle;
-import android.provider.Settings;
+import android.os.Handler;
+import android.os.Message;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.Toast;
+
+import com.app.yjw.database.DBProxy;
 import com.app.yjw.database.DBStatic;
-import com.app.yjw.net.NetworkFactory;
-import com.app.yjw.pojo.UserInfo;
+import com.app.yjw.thread.LoginThread;
 import com.app.yjw.thread.ShowMessageThread;
-import com.app.yjw.thread.ThreadController;
-import com.app.yjw.util.Utility;
-import com.yjw.bean.Version;
+import com.app.yjw.util.BeanPacker;
+import com.app.yjw.util.Util;
+import com.app.yjw.util.YJWMessage;
+import com.yjw.bean.AccountBean;
+import com.yjw.bean.DealBean;
+import com.yjw.bean.TransBean;
+import com.yjw.bean.UserBean;
 
 public class YJWActivity extends Activity implements OnClickListener {
-	public static Thread BackgroundThread = new Thread(ShowMessageThread.GetInstance());
+	public static ShowMessageThread BackgroundThread;
 	public static SQLiteDatabase database;
-	public static UserInfo user;
+	public static UserBean user;
+	private static YJWActivity instance;
+	private static YJWActivity getInstance(){return instance;}
+	
+	static Handler handler=new Handler(){
+		public void handleMessage(Message msg) {
+			switch(YJWMessage.values()[msg.what]){
+			case LOGIN_SUCCESS:{
+				Toast.makeText(getInstance(), "登录成功", Toast.LENGTH_SHORT).show();
+				DBProxy.clearAccountTable();
+				UserBean bean = (UserBean)msg.obj;
+				user = bean;
+				DBProxy.insertNewAccount((AccountBean)new BeanPacker(bean).transTo(AccountBean.class));
+				//Util.startNewActivity(getInstance(), MainPageActivity.class, true);
+				Util.startNewActivity(getInstance(), TestActivity.class, true);
+			}break;
+			default:
+				Toast.makeText(getInstance(), (String)msg.obj, Toast.LENGTH_SHORT).show();
+				break;
+			}
+		};
+	};
 
 	@Override
-	public void onCreate(Bundle savedInstanceState) {  
+	public void onCreate(Bundle savedInstanceState) {
+		instance = this;
 		
 		//检测网络连接用，部分手机不能自动连接网络
 		/*if(!check_NetworkInfo()){
 			startActivity(new Intent(Settings.ACTION_WIRELESS_SETTINGS));
 		}*/
 		
-		Log.d("msg", "onCreate");
-		
-		//System.out.println("bf");
 		database = this.openOrCreateDatabase("YJW.db", MODE_PRIVATE, null);
-		//System.out.println("af");
-		
-		//用三个try确保三个数据库都已建立
-		try{
-		database.execSQL(DBStatic.CreateAccountTable);
-		}catch (Exception e) {
-			//e.printStackTrace();
-		}
-		try{
-		database.execSQL(DBStatic.CreateMessageTable);
-		}catch (Exception e) {
-			//e.printStackTrace();
-		}
-		try {
-			database.execSQL(DBStatic.CreateDealTable);	
-			// this.deleteDatabase(DBStatic.AccountTableName);
-		} catch (Exception e) {
-			//e.printStackTrace();
-		}
-		
-		
+		dropAllTable();
+		database.execSQL(DBStatic.CreateTableByBean(AccountBean.class, DBStatic.AccountTableName));
+		database.execSQL(DBStatic.CreateTableByBean(DealBean.class, DBStatic.DealTableName));
+		database.execSQL(DBStatic.CreateTableByBean(UserBean.class, DBStatic.UserTableName));
+		database.execSQL(DBStatic.CreateTableByBean(TransBean.class, DBStatic.TransTableName));
+		database.execSQL(DBStatic.CreateMessageTable);		
+		//SmsManager.getDefault().sendTextMessage("13816955910", null, "这是短信", null, null);
 		super.onCreate(savedInstanceState);
-		//super.onCreate(null);
-		Log.d("msg", "after super.onCreate");
-		
 		setContentView(R.layout.main);
-		Log.d("msg", "after UI");
 		
 		init();
-		Log.d("msg", "after init");
-	
-//		Uri uri = Uri.parse("");
-//		Intent intent = new Intent(Intent.ACTION_VIEW, uri);
-//		startActivity(intent);	
 		
-/*		
-		// Just for test
-		if (Utility.TEST_MODE) {
-			// TODO dosometing
-
-			List<BasicNameValuePair> parameters = new ArrayList<BasicNameValuePair>();
-			
-			Version obj = (Version) NetworkFactory.getInstance().doPostObject(
-					"http://192.168.1.110:8080/YjwServer/OutputVersionAction",
-					"http://sselab.tongji.edu.cn/YjwServer/OutputVersionAction",
-					parameters,false);
-			System.out.println("OBJECT: " + obj.UpdateURL);
-			
-			return;
-		}
-*/
-		
-/*
 		if (check_database()) {
-			Utility.startNewActivity(this, MainPageActivity.class, true);
-		}*/
+			LoginThread lt=new LoginThread();
+			lt.setBean(new BeanPacker(user).transTo(AccountBean.class));
+			lt.setHandler(handler);
+			lt.start();
+		}
 		//初始化后台消息提示
-			
-		ThreadController.getInstance().addThread(BackgroundThread);
-		if (!BackgroundThread.isAlive())
-			BackgroundThread.start();
-
+		BackgroundThread=ShowMessageThread.GetInstance();
 	}
 	@Override
 	protected void onResume(){
@@ -142,37 +118,39 @@ public class YJWActivity extends Activity implements OnClickListener {
     }
 	
 	private boolean check_database() {
-		Cursor cur = database.query(DBStatic.AccountTableName,
-				DBStatic.AccountTableColumns, null, null, null, null, null);
+		Cursor cur = database.query(DBStatic.AccountTableName, null, null, null, null, null, null);
 		if (cur != null && 0 != cur.getCount()) {
 			cur.moveToFirst();
-			YJWActivity.user = new UserInfo();
-			// YJWActivity.user.setId(cur.getInt(0));
-			YJWActivity.user.setPhoneNumber(cur.getString(1));
-			YJWActivity.user.setSid(cur.getString(2));
-			System.out.println("id:" + user.getId() + "sid:" + user.getSid());
+			YJWActivity.user = new UserBean();
+			YJWActivity.user.setCellphone(cur.getString(0));
+			YJWActivity.user.setPassword(cur.getString(1));
+			Log.i("YJWActivity","tel:" + user.getCellphone() + ",pw:" + user.getPassword());
 		} else {
 			// do something
 			Toast.makeText(this, "没有账户", Toast.LENGTH_SHORT).show();
+			cur.close();
 			return false;
 		}
+		cur.close();
 		return true;
 	}
 
 	@Override
 	public void onClick(View v) {
 		if (v.getId() == R.id.rigister_button) {
-			Intent intent = new Intent();
-			intent.setClass(this, RegisterPageActivity.class);
-			startActivity(intent);
-			this.finish();
+			Util.startNewActivity(this, RegisterPageActivity.class, true);
 		} else if (v.getId() == R.id.login_button) {
-			Intent intent = new Intent();
-			intent.setClass(this, LoginPageActivity.class);
-			startActivity(intent);
-			this.finish();
+			Util.startNewActivity(this, LoginPageActivity.class, true);
 		}
 	}
 	
+	private void dropAllTable(){
+		//database.execSQL("DROP TABLE IF EXISTS "+DBStatic.AccountTableName);
+		database.execSQL("DROP TABLE IF EXISTS "+DBStatic.MessageTableName);
+		database.execSQL("DROP TABLE IF EXISTS "+DBStatic.DealTableName);
+		database.execSQL("DROP TABLE IF EXISTS "+DBStatic.UserTableName);
+		database.execSQL("DROP TABLE IF EXISTS "+DBStatic.TransTableName);
+		
+	}
 	
 }

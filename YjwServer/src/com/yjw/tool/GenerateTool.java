@@ -1,7 +1,6 @@
 package com.yjw.tool;
 
 import java.sql.Date;
-import java.sql.Time;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Iterator;
@@ -31,13 +30,13 @@ public class GenerateTool {
 
 	/* 通过sid获取user_id */
 	public int getUserId(String sid) {
-		return new GetJdbcTemplate().getJtl().queryForInt(
+		return TemplateGetter.getJtl().queryForInt(
 				"select id from yjw_user where sid='" + sid + "'");
 	}
 
 	/* 通过SID获取电话号码 */
 	public String getPhoneNumber(String sid) {
-		return new GetJdbcTemplate()
+		return TemplateGetter
 				.getJtl()
 				.queryForMap(
 						"" + "select cellphone from yjw_user where sid='" + sid
@@ -55,13 +54,13 @@ public class GenerateTool {
 	}
 
 	// 把从数据库查询得到的LIST转换为JSON
-	public JSONObject listToJSON(List<?> list) {
+	public JSONObject listToJSON(List list) {
 		JSONObject object = new JSONObject();
-		Iterator<?> it = list.iterator();
+		Iterator it = list.iterator();
 		int i = 1;
 		while (it.hasNext()) {
 			try {
-				object.put(i + "", (Map<?, ?>) it.next());
+				object.put(i + "", (Map) it.next());
 			} catch (JSONException e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
@@ -77,7 +76,7 @@ public class GenerateTool {
 		boolean flag = false;
 		String sql = "select user_id from yjw_deal where id='" + dealId + "'";
 		try {
-			Map<?, ?> map = new GetJdbcTemplate().getJtl().queryForMap(sql);
+			Map map = TemplateGetter.getJtl().queryForMap(sql);
 			String queryUserId = map.get("user_id").toString();
 			if (queryUserId.equals(userId)) {
 				flag = true;

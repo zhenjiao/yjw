@@ -24,10 +24,9 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
   
   <body>
              <form action="ForwardDealAction" method="post">
-sid:<input type="text" name="sid"/>
-deal_id：<input type="text" name="dealid"/>
-phoneNumber:<input type="text" name="phoneToForward"/>
+sid:<input type="text" name="sid"/></br>
+deal_id：<input type="text" name="dealid"/></br>
+phoneNumber:<input type="text" name="phoneToForward"/></br>
  <input type="submit">
- </form>
   </body>
 </html>

@@ -8,10 +8,12 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.yjw.proxy.DealProxy;
+import com.yjw.dao.EntityDAO;
+import com.yjw.impl.DealImpl;
+import com.yjw.tool.ErrorCode;
 
 public class DelDealAction extends HttpServlet {
-	private DealProxy dealProxy;
+	private EntityDAO dealDao;
 	/**
 	 * Constructor of the object.
 	 */
@@ -22,6 +24,7 @@ public class DelDealAction extends HttpServlet {
 	/**
 	 * Destruction of the servlet. <br>
 	 */
+	@Override
 	public void destroy() {
 		super.destroy(); // Just puts "destroy" string in log
 		// Put your code here
@@ -41,6 +44,7 @@ public class DelDealAction extends HttpServlet {
 	 * @throws IOException
 	 *             if an error occurred
 	 */
+	@Override
 	public void doGet(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 
@@ -48,11 +52,11 @@ public class DelDealAction extends HttpServlet {
 		request.setCharacterEncoding("UTF-8");
 		response.setCharacterEncoding("UTF-8");
 		PrintWriter out = response.getWriter();
-		int deal_id = Integer.parseInt(request.getParameter("dealid"));
-		if(dealProxy.delDeal(deal_id)){
-			out.print("success");
+		int deal_id = Integer.parseInt(request.getParameter("id"));
+		if(dealDao.del(deal_id)){
+			out.print(ErrorCode.E_SUCCESS);
 		}else{
-			out.print("fail");
+			out.print(ErrorCode.E_DEL_DEAL_FAILED);
 		}
 		out.flush();
 		out.close();
@@ -73,6 +77,7 @@ public class DelDealAction extends HttpServlet {
 	 * @throws IOException
 	 *             if an error occurred
 	 */
+	@Override
 	public void doPost(HttpServletRequest request, HttpServletResponse response)
 			throws ServletException, IOException {
 
@@ -85,9 +90,9 @@ public class DelDealAction extends HttpServlet {
 	 * @throws ServletException
 	 *             if an error occurs
 	 */
-	public void init() throws ServletException {
-		// Put your code here
-		this.dealProxy = new DealProxy();
+	@Override
+	public void init(){
+		dealDao = new DealImpl();
 	}
 
 }

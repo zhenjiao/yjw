@@ -8,21 +8,23 @@ import com.yjw.bean.ChatBean;
 public interface ChatDAO {
 
 	/* 加入一条chat */
-	public abstract boolean setChat(ChatBean chatBean);
+	public boolean setChat(ChatBean chatBean);
 
 	/**
 	 * 获取未读的消息
 	 */
-	public abstract HashMap<String, Object> getUnderReadMsg(String phoneNumber);
+	public HashMap<String, Object> getUnreadMsg(String id);
 
 	/**
 	 * 查看是否有新信息
 	 */
-	public abstract int getUnderReadMsgSize(String phoneNumber);
+	public int getUnreadMsgCount(String id);
 
 	/**
 	 * 把信息设置为已读
 	 */
-	public abstract boolean setIsRead(ArrayList<Integer> list);
+	public boolean setIsRead(ArrayList<Integer> list);
+	
+	public String getCellphoneById(String id);
 
 }

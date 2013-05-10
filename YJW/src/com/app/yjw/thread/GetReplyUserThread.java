@@ -10,7 +10,6 @@ import java.util.List;
 import org.apache.http.message.BasicNameValuePair;
 import org.json.JSONException;
 
-import android.os.Looper;
 import android.os.Message;
 
 import com.app.yjw.YJWActivity;
@@ -33,21 +32,21 @@ public class GetReplyUserThread extends YJWBaseThread {
 		String back_str = NetworkFactory.getInstance().doPost(
 				generateURL(), generateParameters(),true);
 
-		Message msg = Message.obtain();
+		msg = Message.obtain();
 		// fucking design at server!
 		if (back_str.equals("No deal from this user.")) {
-			msg.what = YJWMessage.GET_SHARED_USER_NONE;
+			msg.what = YJWMessage.GET_SHARED_USER_NONE.ordinal();
 		} else {
 			try {
 				List<BaseUserInfo> userList = JSONParser
 						.parseJsonToBaseUserInfoList(back_str);
-				msg.what = YJWMessage.GET_MESSAGE_SUCCESS;
+				msg.what = YJWMessage.GET_MESSAGE_SUCCESS.ordinal();
 				msg.obj = userList;
 			} catch (JSONException e) {
-				msg.what = YJWMessage.GET_MESSAGE_FAILURE;
+				msg.what = YJWMessage.GET_MESSAGE_FAILURE.ordinal();
 			}
 		}
-		handler.sendMessage(msg);
+		sendMessage();
 
 	}
 
@@ -56,13 +55,19 @@ public class GetReplyUserThread extends YJWBaseThread {
 		List<BasicNameValuePair> parameters = new ArrayList<BasicNameValuePair>();
 		parameters.add(new BasicNameValuePair("dealId", deal_id));
 		parameters
-				.add(new BasicNameValuePair("sid", YJWActivity.user.getSid()));
+				.add(new BasicNameValuePair("sid", YJWActivity.user.getId().toString()));
 		return parameters;
 	}
 
 	@Override
 	protected String generateURL() {
 		return NetworkConstants.URL_SHAREDUSER;
+	}
+
+	@Override
+	protected void init() {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

@@ -24,9 +24,9 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
   
   <body>
          <form action="FinishRegisterAction" method="post">
-sid<input type="text" name="sid"/>
-password<input type="text" name="password"/>
-name<input type="text" name="name"/>
+sid<input type="text" name="sid"/></br>
+password<input type="text" name="password"/></br>
+name<input type="text" name="name"/></br>
  <input type="submit">
  
  </form>

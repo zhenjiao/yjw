@@ -8,22 +8,35 @@
 package com.app.yjw.database;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
 import android.content.ContentValues;
 import android.database.Cursor;
 import android.util.Log;
-import android.widget.Toast;
 
 import com.app.yjw.YJWActivity;
-import com.app.yjw.pojo.BaseDealInfo.DealState;
-import com.app.yjw.pojo.BaseUserInfo;
-import com.app.yjw.pojo.DealInfo;
-import com.app.yjw.pojo.ExpandDealInfo;
 import com.app.yjw.pojo.MsgInfo;
-import com.app.yjw.pojo.UserInfo;
 import com.app.yjw.pojo.MsgInfo.MsgType;
+import com.app.yjw.util.BeanPacker;
+import com.yjw.bean.AccountBean;
 
 public class DBProxy {
+	
+	public static Map<String,String> curToMap(Cursor cur){
+		HashMap<String,String> map=new HashMap<String, String>();
+		String[] keys=cur.getColumnNames();
+		cur.moveToFirst();
+		for (String key:keys){
+			int col=cur.getColumnIndex(key);
+			String value=cur.getString(col);
+			map.put(key, value);
+		}
+		return map;
+	}
+	
+	
 
 	/**
 	 * @description given the dealId and chatWith(in phone number format),
@@ -33,6 +46,7 @@ public class DBProxy {
 	 * @category database select
 	 * @author Yiheng Tao
 	 */
+	
 	public static List<MsgInfo> getHistoryMessage(String dealId, String chatWith) {
 		List<MsgInfo> msgList = new ArrayList<MsgInfo>();
 		Cursor cur = YJWActivity.database.query(DBStatic.MessageTableName,
@@ -56,8 +70,7 @@ public class DBProxy {
 	 * @category database insertion
 	 * @author Yiheng Tao
 	 */
-	public static void insertChatMessage(String dealId, String chatWith,
-			MsgInfo msg) {
+	public static void insertChatMessage(String dealId, String chatWith,MsgInfo msg) {
 		ContentValues cv = new ContentValues();
 		cv.put("dealid", dealId);
 		cv.put("chat_user", chatWith);
@@ -72,15 +85,19 @@ public class DBProxy {
 	 * @param phone
 	 * @param sid
 	 */
-	public static void insertNewAccount(String phone, String sid)
+	public static void insertNewAccount(AccountBean bean)
 	{
-		ContentValues cv = new ContentValues();
-		cv.put("phone", phone);
-		cv.put("sid", sid);
-		YJWActivity.database.insert(DBStatic.AccountTableName, null, cv);
+		try
+		{
+			YJWActivity.database.execSQL(new BeanPacker(bean).insert(DBStatic.AccountTableName));
+		}
+		catch(Exception e)
+		{
+			Log.e("DBProxy", "Got exception on insertNewAccount:" + e.toString());
+		}
 	}
 	
-	public static void insertDeals(List<DealInfo> list, String type){
+/*	public static void insertDeals(List<DealInfo> list, String type){
 		for(DealInfo deal:list){
 			Cursor cur = YJWActivity.database.query(DBStatic.DealTableName,
 					DBStatic.DealTableColumns, "deal_id = "+deal.getId()+" and type = '"+type+"'",null,null,null,null);
@@ -151,5 +168,23 @@ public class DBProxy {
 				}
 			}		
 		}
+	}*/
+	
+	public static void clearAccountTable(){
+		YJWActivity.database.execSQL(DBStatic.clearAccountTable);
+	}
+	
+	public static void insertPacker(BeanPacker packer,String tableName){
+		YJWActivity.database.execSQL(packer.insert(tableName));
+	}
+	
+	public static BeanPacker SelectPacker(String tableName, String selection,Class<?> type){
+		Cursor cur=YJWActivity.database.query(tableName, null, selection, null , null, null, null);
+		BeanPacker ret=null;
+		if (cur!=null&&cur.getCount()!=0) {
+			ret = new BeanPacker(curToMap(cur),type);			
+		}		
+		cur.close();
+		return ret;
 	}
 }

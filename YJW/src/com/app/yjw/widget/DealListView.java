@@ -24,7 +24,6 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.app.yjw.R;
-import com.app.yjw.YJWActivity;
 import com.app.yjw.pojo.BaseDealInfo;
 import com.app.yjw.pojo.BaseDealInfo.DealState;
 import com.app.yjw.pojo.DealInfo;
@@ -84,20 +83,21 @@ public class DealListView extends ListView {
 				confirmLayout.setTag("ConfirmLayout");
 
 				final Handler handler = new Handler() {
+					@Override
 					public void handleMessage(Message msg) {
-						switch (msg.what) {
-						case YJWMessage.CONFIRM_ACCEPT_SUCCESS:
+						switch (YJWMessage.values()[msg.what]) {
+						case CONFIRM_ACCEPT_SUCCESS:
 							Toast.makeText(getContext(), "确认成功",
 									Toast.LENGTH_SHORT).show();
 							confirmLayout.setVisibility(View.GONE);
 							break;
-						case YJWMessage.CONFIRM_DECLINE_SUCCESS:
+						case CONFIRM_DECLINE_SUCCESS:
 							Toast.makeText(getContext(), "拒绝成功",
 									Toast.LENGTH_SHORT).show();
 							objects.remove(deal);
 							break;
-						case YJWMessage.CONFIRM_DECLINE_FAILURE:
-						case YJWMessage.CONFIRM_ACCEPT_FAILURE:
+						case CONFIRM_DECLINE_FAILURE:
+						case CONFIRM_ACCEPT_FAILURE:
 							Toast.makeText(getContext(), "操作失败",
 									Toast.LENGTH_SHORT).show();
 							break;

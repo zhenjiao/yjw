@@ -44,7 +44,7 @@
             android:background="@drawable/alertbuttonselector"
             android:text="转介"
             android:textColor="@drawable/buttontextselector"
-            android:visibility="gone" />
+            android:visibility="visible" />
     </RelativeLayout>
 
     <LinearLayout
