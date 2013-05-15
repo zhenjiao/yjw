@@ -1,30 +1,19 @@
 package com.yjw.dao;
 
-import java.util.ArrayList;
-import java.util.HashMap;
+import com.yjw.bean.UserBean;
+import com.yjw.sql.ChatSQL;
 
-import com.yjw.bean.ChatBean;
+public class ChatDAO extends BaseDAO{
 
-public interface ChatDAO {
+	public ChatDAO() {
+		super(new ChatSQL());
+		// TODO Auto-generated constructor stub
+	}
 
-	/* 加入一条chat */
-	public boolean setChat(ChatBean chatBean);
+	@Override
+	public Class<?> getBeanClass() {
+		return UserBean.class;
+	}
 
-	/**
-	 * 获取未读的消息
-	 */
-	public HashMap<String, Object> getUnreadMsg(String id);
-
-	/**
-	 * 查看是否有新信息
-	 */
-	public int getUnreadMsgCount(String id);
-
-	/**
-	 * 把信息设置为已读
-	 */
-	public boolean setIsRead(ArrayList<Integer> list);
 	
-	public String getCellphoneById(String id);
-
 }

@@ -12,22 +12,28 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.yjw.bean.AddTransBackLogBean;
 import com.yjw.bean.AddTransBean;
+import com.yjw.bean.ContactBean;
 import com.yjw.bean.DealBean;
 import com.yjw.bean.TransBean;
 import com.yjw.bean.UserBean;
-import com.yjw.dao.EntityDAO;
+import com.yjw.dao.BaseDAO;
+import com.yjw.dao.ContactDAO;
+import com.yjw.dao.DealDAO;
+import com.yjw.dao.TransDAO;
 import com.yjw.dao.UserDAO;
-import com.yjw.impl.DealImpl;
-import com.yjw.impl.TransImpl;
-import com.yjw.impl.UserImpl;
 import com.yjw.tool.BeanPacker;
 import com.yjw.tool.ErrorCode;
 
 public class AddTransAction extends HttpServlet {
 
-	private EntityDAO transDao;
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 7909383098611081724L;
+	private BaseDAO transDao;
 	private UserDAO userDao;
-	private EntityDAO dealDao;
+	private BaseDAO dealDao;
+	private ContactDAO contactDao;
 	//private GenerateTool generateTool;
 	/**
 	 * Constructor of the object.
@@ -75,6 +81,10 @@ public class AddTransAction extends HttpServlet {
 		Set<UserBean> overtrans=new HashSet<UserBean>();
 		for (UserBean user:bean.getUsers()){
 			int userid = 0;
+			ContactBean c=new ContactBean();
+			c.setCellphone(user.getCellphone());
+			c.setId(bean.getFromid());
+			contactDao.add(new BeanPacker(c));
 			if (user.getId()==null){
 				BeanPacker upacker=userDao.getByCellphone(user.getCellphone());
 				if (upacker!=null){
@@ -82,6 +92,7 @@ public class AddTransAction extends HttpServlet {
 					userid=u.getId();
 				}
 			}else userid = user.getId();
+			
 			if (userid==0) {
 				unreg.add(user);
 				continue;
@@ -165,8 +176,9 @@ public class AddTransAction extends HttpServlet {
 	 */
 	@Override
 	public void init() throws ServletException {
-		transDao=new TransImpl();
-		userDao=new UserImpl(); 
-		dealDao=new DealImpl();
+		transDao=new TransDAO();
+		userDao=new UserDAO(); 
+		dealDao=new DealDAO();
+		contactDao=new ContactDAO();
 	}
 }

@@ -10,14 +10,14 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.yjw.bean.GetInfoBean;
-import com.yjw.dao.EntityDAO;
-import com.yjw.impl.DealImpl;
+import com.yjw.dao.BaseDAO;
+import com.yjw.dao.DealDAO;
 import com.yjw.tool.BeanPacker;
 import com.yjw.tool.ErrorCode;
 
 public class SyncDealAction extends HttpServlet {
 	
-	private EntityDAO dealDao; 
+	private BaseDAO dealDao; 
 	/**
 	 * Constructor of the object.
 	 */
@@ -90,7 +90,7 @@ public class SyncDealAction extends HttpServlet {
 	 */
 	@Override
 	public void init() throws ServletException {
-		this.dealDao = new DealImpl();
+		this.dealDao = new DealDAO();
 	}
 
 }

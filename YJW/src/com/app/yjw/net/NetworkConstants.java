@@ -2,10 +2,10 @@ package com.app.yjw.net;
 
 public class NetworkConstants {
 	//public static String SERVER_URL = "http://sselab.tongji.edu.cn/";//"http://192.168.1.110:8080/";//"http://sselab.tongji.edu.cn/";//"http://10.0.2.2:8080/";//"http://sselab.tongji.edu.cn/";
+	//public static String SERVER_URL = "http://192.168.71.1:8080/";
 	public static String SERVER_URL = "http://www.1step2leads.com:8080/";
-	//public static String SERVER_URL = "http://221.239.197.44:8080/";
 	//public static String SERVER_URL = "http://apache:secret@ec2-54-251-222-148.ap-southeast-1.compute.amazonaws.com/git/yjw/";
-	public static String SERVER_IP = "http://";
+	public static String SERVER_IP = "http://54.251.240.3:8080";
 	public static String SERVER_APPNAME = "yjwServer";
 
 	
@@ -18,6 +18,8 @@ public class NetworkConstants {
 	public static final String URL_CHAT = SERVER_URL + SERVER_APPNAME 
 			+ "/ChatAction";
 	
+	public static final String URL_SYNCUSER = SERVER_URL + SERVER_APPNAME
+			+ "/SyncUserAction";
 	public static final String URL_GETUSER = SERVER_URL + SERVER_APPNAME
 			+ "/GetUserAction";
 	public static final String URL_GETUSERBYPHONE = SERVER_URL + SERVER_APPNAME

@@ -20,39 +20,17 @@ public class DBStatic {
 	public static String TransTableName = "trans";
 
 	// 数据库表的列名
-	//public static String[] AccountTableColumns = new String[] { "cellphone", "password" };
 	public static String[] MessageTableColumns = new String[] { "id", "deal", "from_id", "to_id", "content", "type" };
-	//public static String[] DealTableColumns = new String[] {
-		//	"id", "deal_id", "type"/* Received (Direct Forward / Forward ) || Create || Forward */,
-			//"title", "content", "expeir_date","creator","referfee","commissionfee",
-			//"creatorphone","creatorname","dealstate" };
-
-	public static String CreateAccountTable = "CREATE TABLE IF NOT EXISTS "+ AccountTableName	+ 
-			" (" +
-			" cellphone TEXT," +
-			" password TEXT" +
-			" )";
 
 	public static String CreateMessageTable = "CREATE TABLE IF NOT EXISTS "
 			+ MessageTableName
 			+ " (id INTEGER PRIMARY KEY AUTOINCREMENT, deal INTEGER, from_id INTEGER, to_id INTEGER," 
 			+ " content TEXT, type TEXT)";
-
-	public static String CreateDealTable = "CREATE TABLE "
-			+ DealTableName
-			+ "(id INTEGER PRIMARY KEY AUTOINCREMENT, deal_id TEXT, type TEXT ,"
-			+ " title TEXT, content TEXT, expeir_date TEXT , "
-			+ " creator TEXT, referfee TEXT, commissionfee TEXT, creatorphone TEXT, creatorname TEXT, dealstate TEXT)";
-	
 	
 	public static String clearAccountTable = "delete from " + AccountTableName;
-
-	public static String generateSQLForDeleteMessage() {
-		return "delete from " + MessageTableName + " where id <> -1 ";
-	}
-
-	public static String generateSQLForDeleteMessage(int id) {
-		return "delete from" + MessageTableName + "where id = " + id;
+	
+	public static String deleteUserByPhone(String phone){
+		return "delete from " + UserTableName + " where cellphone='"+phone+"'";
 	}
 
 	public static String CreateTableByBean(Class<?> beanclass,String tableName){

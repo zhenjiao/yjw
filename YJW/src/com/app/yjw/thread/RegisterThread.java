@@ -51,6 +51,7 @@ public class RegisterThread extends YJWBaseThread {
 	@Override
 	protected void init() {
 		RegisterError(ErrorCode.E_DUBLICATE_ID, YJWMessage.REGISTER_FAILURE, "已经注册的账号");
+		RegisterError(ErrorCode.E_DUBLICATE_NAME, YJWMessage.REGISTER_FAILURE, "已经注册的昵称");
 		RegisterError(ErrorCode.E_INVALIDATE_FAILED, YJWMessage.REGISTER_FAILURE, "验证失败");
 	}
 

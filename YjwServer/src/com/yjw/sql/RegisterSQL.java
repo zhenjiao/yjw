@@ -34,4 +34,8 @@ public class RegisterSQL {
 				" cellphone='"+bean.getCellphone()+"'"+" and "+
 				" password='" +bean.getPassword() +"'";
 	}
+
+	public String cellNameDup(String name) {
+		return "select count(id) from yjw_user where name='" + name + "'";
+	}
 }

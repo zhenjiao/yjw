@@ -1,9 +1,9 @@
 package com.yjw.sql.adapter;
 
-public class OrAdapter extends WhereAdapter {
+public class OrAdapter extends IfAdapter {
 
-	private WhereAdapter[] adapters;
-	public OrAdapter(WhereAdapter...adapters) {
+	private IfAdapter[] adapters;
+	public OrAdapter(IfAdapter...adapters) {
 		this.adapters=adapters;
 	}
 
@@ -11,15 +11,18 @@ public class OrAdapter extends WhereAdapter {
 	String condition() {
 		String s="";
 		boolean start=true;
-		for (WhereAdapter adapter:adapters){
+		for (IfAdapter adapter:adapters){
+			String ss=adapter.toString();
+			if (ss==null) continue;
 			if (start){
 				s+="("; 
 				start=false;
 			}
 			else s+=" OR ";
-			s+=adapter;
+			s+=ss;
 		}
 		s+=")";
+		if (s.equals("()")) return null;
 		return s;
 	}
 

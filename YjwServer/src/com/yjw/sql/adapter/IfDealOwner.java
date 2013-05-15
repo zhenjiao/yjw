@@ -1,6 +1,6 @@
 package com.yjw.sql.adapter;
 
-public class IfDealOwner extends WhereAdapter {
+public class IfDealOwner extends IfAdapter {
 	
 	int owner_id;
 	

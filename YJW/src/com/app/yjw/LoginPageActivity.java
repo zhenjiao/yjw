@@ -20,7 +20,7 @@ import com.yjw.bean.AccountBean;
 import com.yjw.bean.UserBean;
 
 
-public class LoginPageActivity extends Activity implements OnClickListener {
+public class LoginPageActivity extends BaseActivity implements OnClickListener {
 
 	Button back_button;
 	Button login_button;
@@ -58,23 +58,13 @@ public class LoginPageActivity extends Activity implements OnClickListener {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.signin_page);
-		instance=this;
 		init();
+		instance=this;
 	}
 	@Override
 	protected void onResume(){
 		super.onResume();
 		ShowMessageThread.SetCurrentContext(this);
-	}
-	private void init() {
-		back_button = (Button) findViewById(R.id.bt_left);
-		back_button.setOnClickListener(this);
-
-		login_button = (Button) findViewById(R.id.bt_right);
-		login_button.setOnClickListener(this);
-
-		username_edittext = (EditText) findViewById(R.id.username_edittext);
-		password_edittext = (EditText) findViewById(R.id.password_edittext);
 	}
 
 	@Override
@@ -100,6 +90,18 @@ public class LoginPageActivity extends Activity implements OnClickListener {
 			lt.setHandler(handler);
 			lt.start();
 		}
+	}
+	@Override
+	protected void initViews() {
+		back_button = (Button) findViewById(R.id.bt_left);
+		back_button.setOnClickListener(this);
+
+		login_button = (Button) findViewById(R.id.bt_right);
+		login_button.setOnClickListener(this);
+
+		username_edittext = (EditText) findViewById(R.id.username_edittext);
+		password_edittext = (EditText) findViewById(R.id.password_edittext);
+		
 	}
 	
 }

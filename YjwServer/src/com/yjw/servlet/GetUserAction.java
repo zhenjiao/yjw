@@ -8,14 +8,14 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.yjw.dao.EntityDAO;
-import com.yjw.impl.UserImpl;
+import com.yjw.dao.BaseDAO;
+import com.yjw.dao.UserDAO;
 import com.yjw.tool.BeanPacker;
 import com.yjw.tool.ErrorCode;
 
 public class GetUserAction extends HttpServlet {
 
-	private EntityDAO userDao;
+	private BaseDAO userDao;
 	/**
 	 * Constructor of the object.
 	 */
@@ -83,7 +83,7 @@ public class GetUserAction extends HttpServlet {
 	
 	@Override
 	public void init() throws ServletException {
-		userDao=new UserImpl();
+		userDao=new UserDAO();
 		super.init();
 	}
 

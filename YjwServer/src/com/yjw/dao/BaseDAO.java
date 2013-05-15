@@ -1,4 +1,4 @@
-package com.yjw.impl;
+package com.yjw.dao;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -14,17 +14,16 @@ import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 
 import com.yjw.bean.GetInfoBean;
-import com.yjw.dao.EntityDAO;
-import com.yjw.sql.EntitySQL;
+import com.yjw.sql.BaseSQL;
 import com.yjw.tool.BeanPacker;
 import com.yjw.tool.TemplateGetter;
 
-public abstract class EntityImpl implements EntityDAO {
+public abstract class BaseDAO {
 
 	protected JdbcTemplate jdbcTemplate;
-	protected EntitySQL sql;
+	protected BaseSQL sql;
 
-	public EntityImpl(EntitySQL sql) {
+	public BaseDAO(BaseSQL sql) {
 		this.jdbcTemplate = TemplateGetter.getJtl();
 		this.sql = sql;
 	}
@@ -35,12 +34,14 @@ public abstract class EntityImpl implements EntityDAO {
 			final BeanPacker PACKER=packer;
 			KeyHolder keyHolder = new GeneratedKeyHolder();
 			//sql.add(packer)
-			if (jdbcTemplate.update(new PreparedStatementCreator() {
+			int ret=jdbcTemplate.update(new PreparedStatementCreator() {
 				public PreparedStatement createPreparedStatement(Connection connection)	throws SQLException {
 					 return connection.prepareStatement(sql.add(PACKER),Statement.RETURN_GENERATED_KEYS);
 				}
-			},keyHolder)!=-1) return keyHolder.getKey().intValue();
-			return -1;
+			},keyHolder);
+			if (ret==-1)return -1; else
+			if (ret==0) return 0; else
+			return keyHolder.getKey().intValue();
 		}catch(Exception e){
 			return -1;
 		}
@@ -57,8 +58,6 @@ public abstract class EntityImpl implements EntityDAO {
 
 	/* Get User's Deal */
 	public List<Integer> sync(GetInfoBean bean) {
-
-		// 获取分页信息
 		String sqlstr=sql.sync(bean);
 		System.out.println(sqlstr);
 		List<Map<String,Object>> list=jdbcTemplate.queryForList(sqlstr);

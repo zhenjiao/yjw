@@ -12,7 +12,6 @@ import org.springframework.jdbc.core.JdbcTemplate;
 
 import com.yjw.bean.AccountBean;
 import com.yjw.dao.RegisterDAO;
-import com.yjw.impl.RegisterImpl;
 import com.yjw.tool.BeanPacker;
 
 public class LoginAction extends HttpServlet {
@@ -100,7 +99,7 @@ public class LoginAction extends HttpServlet {
 	 */
 	@Override
 	public void init() throws ServletException {	
-		this.registerDao = new RegisterImpl();
+		this.registerDao = new RegisterDAO();
 	}
 
 }

@@ -9,7 +9,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.yjw.dao.TransDAO;
-import com.yjw.impl.TransImpl;
 import com.yjw.tool.ErrorCode;
 
 public class ConfTransAction extends HttpServlet {
@@ -80,7 +79,7 @@ public class ConfTransAction extends HttpServlet {
 	 * @throws ServletException if an error occurs
 	 */
 	public void init() throws ServletException {
-		transDao=new TransImpl();
+		transDao=new TransDAO();
 	}
 
 }

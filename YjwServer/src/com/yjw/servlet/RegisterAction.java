@@ -11,7 +11,6 @@ import javax.servlet.http.HttpServletResponse;
 import com.yjw.bean.RegisterBean;
 import com.yjw.bean.UserBean;
 import com.yjw.dao.RegisterDAO;
-import com.yjw.impl.RegisterImpl;
 import com.yjw.tool.BeanPacker;
 import com.yjw.tool.ErrorCode;
 
@@ -65,14 +64,15 @@ public class RegisterAction extends HttpServlet {
 		String code = rbean.getValidateCode();
 		if(this.registerDAO.validate(sid, code)){
 			UserBean u=(UserBean)packer.transTo(UserBean.class);
-			//u.setName(request.getParameter("name"));
-			//u.setPassword(request.getParameter("password"));
-			//u.setCellphone(request.getParameter("cellphone"));
-			//u.setEmail(request.getParameter("email"));
 			if(this.registerDAO.register(u)){
 				msg = ErrorCode.E_SUCCESS.toString();
 			}else{
-				msg = ErrorCode.E_FAILED.toString();
+				if (registerDAO.isCellphoneDuplicate(u.getCellphone()))
+					msg = ErrorCode.E_DUBLICATE_ID.toString();
+				else if (registerDAO.isNameDuplicate(u.getName()))
+					msg = ErrorCode.E_DUBLICATE_NAME.toString();
+				else
+					msg = ErrorCode.E_FAILED.toString();
 			}
 		}else{
 			msg = ErrorCode.E_INVALIDATE_FAILED.toString();
@@ -113,7 +113,7 @@ public class RegisterAction extends HttpServlet {
 	@Override
 	public void init() throws ServletException {
 		//this.jdbcTemplate = new GetJdbcTemplate().getJtl();
-		this.registerDAO = new RegisterImpl();
+		this.registerDAO = new RegisterDAO();
 	}
 
 }

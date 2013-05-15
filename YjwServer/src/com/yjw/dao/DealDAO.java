@@ -1,13 +1,12 @@
-package com.yjw.impl;
+package com.yjw.dao;
 
 import com.yjw.bean.DealBean;
-import com.yjw.dao.EntityDAO;
 import com.yjw.sql.DealSQL;
 
 /*关于交易的具体实现封装*/
-public class DealImpl extends EntityImpl implements EntityDAO {
+public class DealDAO extends BaseDAO{
 
-	public DealImpl() {
+	public DealDAO() {
 		super(new DealSQL());
 	}
 

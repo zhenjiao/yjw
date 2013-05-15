@@ -1,9 +1,9 @@
 package com.yjw.sql.adapter;
 
-public class AndAdapter extends WhereAdapter{
+public class AndAdapter extends IfAdapter{
 
-	private WhereAdapter[] adapters;
-	public AndAdapter(WhereAdapter...adapters) {
+	private IfAdapter[] adapters;
+	public AndAdapter(IfAdapter...adapters) {
 		this.adapters=adapters;
 	}
 
@@ -11,15 +11,18 @@ public class AndAdapter extends WhereAdapter{
 	String condition() {
 		String s="";
 		boolean start=true;
-		for (WhereAdapter adapter:adapters){
+		for (IfAdapter adapter:adapters){
+			String ss=adapter.toString();
+			if (ss==null) continue;
 			if (start){
 				s+="("; 
 				start=false;
 			}
 			else s+=" AND ";
-			s+=adapter;
+			s+=ss;
 		}
 		s+=")";
+		if (s.equals("()")) return null;
 		return s;
 	}
 }

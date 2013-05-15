@@ -48,7 +48,7 @@ public class G {
 	public static UserBean getUser(String cellphone){
 		BeanPacker bean=DBProxy.SelectPacker(DBStatic.UserTableName, "cellphone="+cellphone, UserBean.class);
 		if (bean==null) {
-			BufferThread.addUser(cellphone);
+			//BufferThread.addUser(cellphone);
 			return null;
 		}
 		return (UserBean)bean.getBean();

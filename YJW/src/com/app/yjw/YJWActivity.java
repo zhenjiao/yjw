@@ -1,6 +1,10 @@
 package com.app.yjw;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import android.app.Activity;
+import android.content.ContentResolver;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -9,6 +13,7 @@ import android.net.NetworkInfo.State;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
+import android.provider.ContactsContract;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -20,6 +25,7 @@ import com.app.yjw.database.DBStatic;
 import com.app.yjw.thread.LoginThread;
 import com.app.yjw.thread.ShowMessageThread;
 import com.app.yjw.util.BeanPacker;
+import com.app.yjw.util.G;
 import com.app.yjw.util.Util;
 import com.app.yjw.util.YJWMessage;
 import com.yjw.bean.AccountBean;
@@ -27,7 +33,7 @@ import com.yjw.bean.DealBean;
 import com.yjw.bean.TransBean;
 import com.yjw.bean.UserBean;
 
-public class YJWActivity extends Activity implements OnClickListener {
+public class YJWActivity extends BaseActivity implements OnClickListener {
 	public static ShowMessageThread BackgroundThread;
 	public static SQLiteDatabase database;
 	public static UserBean user;
@@ -55,6 +61,7 @@ public class YJWActivity extends Activity implements OnClickListener {
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
+		
 		instance = this;
 		
 		//检测网络连接用，部分手机不能自动连接网络
@@ -63,18 +70,12 @@ public class YJWActivity extends Activity implements OnClickListener {
 		}*/
 		
 		database = this.openOrCreateDatabase("YJW.db", MODE_PRIVATE, null);
-		dropAllTable();
-		database.execSQL(DBStatic.CreateTableByBean(AccountBean.class, DBStatic.AccountTableName));
-		database.execSQL(DBStatic.CreateTableByBean(DealBean.class, DBStatic.DealTableName));
-		database.execSQL(DBStatic.CreateTableByBean(UserBean.class, DBStatic.UserTableName));
-		database.execSQL(DBStatic.CreateTableByBean(TransBean.class, DBStatic.TransTableName));
-		database.execSQL(DBStatic.CreateMessageTable);		
+		dropTables();
+		initTables();
 		//SmsManager.getDefault().sendTextMessage("13816955910", null, "这是短信", null, null);
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.main);
-		
 		init();
-		
 		if (check_database()) {
 			LoginThread lt=new LoginThread();
 			lt.setBean(new BeanPacker(user).transTo(AccountBean.class));
@@ -88,13 +89,6 @@ public class YJWActivity extends Activity implements OnClickListener {
 	protected void onResume(){
 		super.onResume();
 		ShowMessageThread.SetCurrentContext(this);
-	}
-
-	private void init() {
-		Button register_button = (Button) findViewById(R.id.rigister_button);
-		register_button.setOnClickListener(this);
-		Button login_button = (Button) findViewById(R.id.login_button);
-		login_button.setOnClickListener(this);
 	}
 
 	private boolean check_NetworkInfo()
@@ -144,13 +138,60 @@ public class YJWActivity extends Activity implements OnClickListener {
 		}
 	}
 	
-	private void dropAllTable(){
+	private void initTables(){
+		database.execSQL(DBStatic.CreateTableByBean(AccountBean.class, DBStatic.AccountTableName));
+		database.execSQL(DBStatic.CreateTableByBean(DealBean.class, DBStatic.DealTableName));
+		database.execSQL(DBStatic.CreateTableByBean(UserBean.class, DBStatic.UserTableName));
+		database.execSQL(DBStatic.CreateTableByBean(TransBean.class, DBStatic.TransTableName));
+		database.execSQL(DBStatic.CreateMessageTable);
+		
+		ContentResolver content = getContentResolver();
+		Cursor cur=content.query(ContactsContract.Contacts.CONTENT_URI, null, null, null, null);
+		while(cur.moveToNext()){
+			int namecol=cur.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME);
+			String name=cur.getString(namecol);
+			int idcol=cur.getColumnIndex(ContactsContract.Contacts._ID);
+			String id=cur.getString(idcol);
+			Cursor num=content.query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null,
+					ContactsContract.CommonDataKinds.Phone.CONTACT_ID+" = "+id, null, null); 
+			while(num.moveToNext()){
+				int numcol=num.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER);
+				String phone=num.getString(numcol);
+				phone=phone.replace(" ", "");
+				phone=phone.replace("-", "");
+				phone=phone.replace("+86", "");
+				if (!G.cellphones.contains(phone))
+					G.cellphones.add(phone);
+				
+				UserBean bean=new UserBean();
+				bean.setName(name);
+				bean.setCellphone(phone);
+				DBProxy.insertPacker(new BeanPacker(bean), DBStatic.UserTableName);
+			}
+			num.close();
+		}
+		cur.close();
+		
+		//UserBean bean=new UserBean();
+		//bean.setName("测试名字");
+		//bean.setCellphone("13131333323");
+		//DBProxy.inserUserToContactsBook(this, bean);
+	}
+	
+	private void dropTables(){
 		//database.execSQL("DROP TABLE IF EXISTS "+DBStatic.AccountTableName);
 		database.execSQL("DROP TABLE IF EXISTS "+DBStatic.MessageTableName);
 		database.execSQL("DROP TABLE IF EXISTS "+DBStatic.DealTableName);
 		database.execSQL("DROP TABLE IF EXISTS "+DBStatic.UserTableName);
 		database.execSQL("DROP TABLE IF EXISTS "+DBStatic.TransTableName);
 		
+	}
+	@Override
+	protected void initViews() {
+		Button register_button = (Button) findViewById(R.id.rigister_button);
+		register_button.setOnClickListener(this);
+		Button login_button = (Button) findViewById(R.id.login_button);
+		login_button.setOnClickListener(this);
 	}
 	
 }

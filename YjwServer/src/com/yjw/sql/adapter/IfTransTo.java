@@ -1,6 +1,6 @@
 package com.yjw.sql.adapter;
 
-public class IfTransTo extends WhereAdapter {
+public class IfTransTo extends IfAdapter {
 	
 	int to_id;
 	Boolean conf=null;

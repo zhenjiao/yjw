@@ -156,9 +156,11 @@ public class BeanPacker {
 					//System.out.print("return:"+ret);
 					if (!Util.isEmpty(ret)){
 						if (ret instanceof List){
-							map.put(method.getName().substring(3).toLowerCase(), listToStr((List<?>)ret));
+							if (((List<?>)ret).size()>0)
+								map.put(method.getName().substring(3).toLowerCase(), listToStr((List<?>)ret));
 						}else if (ret instanceof Object[]){	
-							map.put(method.getName().substring(3).toLowerCase(), listToStr(Arrays.asList((Object[])ret)));
+							if (((Object[])ret).length>0)
+								map.put(method.getName().substring(3).toLowerCase(), listToStr(Arrays.asList((Object[])ret)));
 						}else if (isBean(ret)){
 							map.put(method.getName().substring(3).toLowerCase(),new BeanPacker(ret).toString());
 						}else{

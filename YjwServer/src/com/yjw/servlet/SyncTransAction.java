@@ -10,14 +10,14 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.yjw.bean.GetInfoBean;
-import com.yjw.dao.EntityDAO;
-import com.yjw.impl.TransImpl;
+import com.yjw.dao.BaseDAO;
+import com.yjw.dao.TransDAO;
 import com.yjw.tool.BeanPacker;
 import com.yjw.tool.ErrorCode;
 
 public class SyncTransAction extends HttpServlet {
 	
-	private EntityDAO transDao;
+	private BaseDAO transDao;
 
 	/**
 	 * Constructor of the object.
@@ -88,7 +88,7 @@ public class SyncTransAction extends HttpServlet {
 	 * @throws ServletException if an error occurs
 	 */
 	public void init() throws ServletException {
-		transDao=new TransImpl();
+		transDao=new TransDAO();
 	}
 
 }

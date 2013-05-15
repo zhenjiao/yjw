@@ -15,13 +15,13 @@ import com.app.yjw.pojo.DealInfo;
 import com.app.yjw.pojo.MsgInfo;
 import com.app.yjw.util.YJWMessage;
 
-public class PushMsgThread extends YJWBaseThread {
+public class AddChatThread extends YJWBaseThread {
 
 	MsgInfo chat;
 	DealInfo deal;
 	String to_user;
 
-	public PushMsgThread(Handler handler) {
+	public AddChatThread(Handler handler) {
 		this.handler = handler;
 	}
 

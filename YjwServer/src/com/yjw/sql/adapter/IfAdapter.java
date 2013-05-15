@@ -1,6 +1,6 @@
 package com.yjw.sql.adapter;
 
-public abstract class WhereAdapter {
+public abstract class IfAdapter {
 	abstract String condition();
 	@Override
 	public String toString() {

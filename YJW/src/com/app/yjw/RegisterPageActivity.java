@@ -13,6 +13,7 @@ import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.app.yjw.ctrl.YJWControler;
 import com.app.yjw.database.DBProxy;
 import com.app.yjw.thread.LoginThread;
 import com.app.yjw.thread.RegisterThread;
@@ -25,7 +26,7 @@ import com.yjw.bean.AccountBean;
 import com.yjw.bean.RegisterBean;
 import com.yjw.bean.UserBean;
 
-public class RegisterPageActivity extends Activity implements OnClickListener {
+public class RegisterPageActivity extends BaseActivity implements OnClickListener {
 
 	private Button btn_back;
 	private Button btn_next;
@@ -78,35 +79,15 @@ public class RegisterPageActivity extends Activity implements OnClickListener {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.register);
+		init();		
 		instance=this;
-		init();
 	}
 	@Override
 	protected void onResume(){
 		super.onResume();
 		ShowMessageThread.SetCurrentContext(this);
 	}
-	private void init() {
-		btn_back = (Button)findViewById(R.id.bt_left);
-		btn_back.setOnClickListener(this);
-		btn_next = (Button)findViewById(R.id.bt_right);
-		btn_next.setOnClickListener(this);		
-		btn_getcode = (Button)findViewById(R.id.btn_validatecode);
-		btn_getcode.setOnClickListener(this);		
-		
-		et_code = 		(EditText)findViewById(R.id.editValidatecode);
-		et_name = 		(EditText)findViewById(R.id.editName);
-		et_password = 	(EditText)findViewById(R.id.editPassword);
-		et_confirm = 	(EditText)findViewById(R.id.editComfirm);
-		et_email = 		(EditText)findViewById(R.id.editEmail);
-		et_phone = 		(EditText)findViewById(R.id.edittext_phonenumber);
-
-		cb_follow = (CheckBox) findViewById(R.id.checkBox1);
-		
-		tv_privacy = (TextView)findViewById(R.id.textPrivacyLink);
-		tv_privacy.setMovementMethod(LinkMovementMethod.getInstance());
-	}
-
+	
 	private boolean checkAllInfoFilled() {
 		do{			
 			if (et_phone.getText().length()!=11){
@@ -169,5 +150,27 @@ public class RegisterPageActivity extends Activity implements OnClickListener {
 				t.start();
 			}
 		}
+	}
+	@Override
+	protected void initViews() {
+		btn_back = (Button)findViewById(R.id.bt_left);
+		btn_back.setOnClickListener(this);
+		btn_next = (Button)findViewById(R.id.bt_right);
+		btn_next.setOnClickListener(this);		
+		btn_getcode = (Button)findViewById(R.id.btn_validatecode);
+		btn_getcode.setOnClickListener(this);		
+		
+		et_code = 		(EditText)findViewById(R.id.editValidatecode);
+		et_name = 		(EditText)findViewById(R.id.editName);
+		et_password = 	(EditText)findViewById(R.id.editPassword);
+		et_confirm = 	(EditText)findViewById(R.id.editComfirm);
+		et_email = 		(EditText)findViewById(R.id.editEmail);
+		et_phone = 		(EditText)findViewById(R.id.edittext_phonenumber);
+
+		cb_follow = (CheckBox) findViewById(R.id.checkBox1);
+		
+		tv_privacy = (TextView)findViewById(R.id.textPrivacyLink);
+		tv_privacy.setMovementMethod(LinkMovementMethod.getInstance());
+		
 	}
 }

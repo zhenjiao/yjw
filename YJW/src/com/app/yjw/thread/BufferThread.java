@@ -8,6 +8,8 @@ import java.util.Set;
 import org.apache.http.message.BasicNameValuePair;
 
 import com.app.yjw.ctrl.YJWControler;
+import com.app.yjw.database.DBProxy;
+import com.app.yjw.database.DBStatic;
 import com.app.yjw.net.NetworkConstants;
 import com.app.yjw.util.BeanPacker;
 import com.app.yjw.util.G;
@@ -121,6 +123,8 @@ public class BufferThread extends YJWBaseThread {
 					msg.what=YJWMessage.BUFFER_DEAL.ordinal();
 				}else if (set==userPhone){
 					UserBean bean=(UserBean)new BeanPacker(back[i]).getBean();
+					DBProxy.execSQL(DBStatic.deleteUserByPhone(bean.getCellphone()));
+					DBProxy.inserUserToContactsBook(YJWControler.getInstance().getActivity(), bean);
 					G.addUser(bean);
 					msg.what=YJWMessage.BUFFER_USER.ordinal();
 				}

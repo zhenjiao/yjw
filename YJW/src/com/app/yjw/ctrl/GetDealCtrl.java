@@ -6,6 +6,7 @@ import com.app.yjw.TestActivity;
 import com.app.yjw.YJWActivity;
 import com.app.yjw.thread.SyncDealThread;
 import com.app.yjw.thread.SyncTransThread;
+import com.app.yjw.thread.SyncUserThread;
 import com.app.yjw.util.YJWMessage;
 import com.yjw.bean.GetInfoBean;
 
@@ -36,6 +37,10 @@ public class GetDealCtrl extends BaseCtrl{
 		bean.setId(YJWActivity.user.getId());
 		bean.setPage(page);
 		YJWControler.Start(SyncDealThread.class, bean);
+	}
+	
+	public void syncUser(){
+		YJWControler.Start(SyncUserThread.class, YJWActivity.user.getId());
 	}
 
 }

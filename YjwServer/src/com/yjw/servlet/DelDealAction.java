@@ -8,12 +8,12 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.yjw.dao.EntityDAO;
-import com.yjw.impl.DealImpl;
+import com.yjw.dao.BaseDAO;
+import com.yjw.dao.DealDAO;
 import com.yjw.tool.ErrorCode;
 
 public class DelDealAction extends HttpServlet {
-	private EntityDAO dealDao;
+	private BaseDAO dealDao;
 	/**
 	 * Constructor of the object.
 	 */
@@ -92,7 +92,7 @@ public class DelDealAction extends HttpServlet {
 	 */
 	@Override
 	public void init(){
-		dealDao = new DealImpl();
+		dealDao = new DealDAO();
 	}
 
 }

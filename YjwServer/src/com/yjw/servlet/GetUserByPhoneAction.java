@@ -9,7 +9,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.yjw.dao.UserDAO;
-import com.yjw.impl.UserImpl;
 import com.yjw.tool.BeanPacker;
 import com.yjw.tool.ErrorCode;
 
@@ -83,7 +82,7 @@ public class GetUserByPhoneAction extends HttpServlet {
 	
 	@Override
 	public void init() throws ServletException {
-		userDao=new UserImpl();
+		userDao=new UserDAO();
 		super.init();
 	}
 

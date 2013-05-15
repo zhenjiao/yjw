@@ -10,16 +10,20 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.yjw.bean.DealBean;
 import com.yjw.bean.TransBean;
-import com.yjw.dao.EntityDAO;
-import com.yjw.impl.DealImpl;
-import com.yjw.impl.TransImpl;
+import com.yjw.dao.BaseDAO;
+import com.yjw.dao.DealDAO;
+import com.yjw.dao.TransDAO;
 import com.yjw.tool.BeanPacker;
 import com.yjw.tool.ErrorCode;
 
 public class AddDealAction extends HttpServlet {
 	
-	private EntityDAO dealDao;
-	private EntityDAO transDao;
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1698747204414818564L;
+	private BaseDAO dealDao;
+	private BaseDAO transDao;
 	//private GenerateTool generateTool;
 	/**
 	 * Constructor of the object.
@@ -117,8 +121,8 @@ public class AddDealAction extends HttpServlet {
 	@Override
 	public void init() throws ServletException {
 		// Put your code here
-		dealDao=new DealImpl();
-		transDao=new TransImpl();
+		dealDao=new DealDAO();
+		transDao=new TransDAO();
 	}
 	
 	/*public static byte[] getBytesFromObject(Serializable obj) throws Exception {

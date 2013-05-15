@@ -10,7 +10,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.yjw.bean.ValidationBean;
 import com.yjw.dao.RegisterDAO;
-import com.yjw.impl.RegisterImpl;
 import com.yjw.tool.ErrorCode;
 import com.yjw.tool.GenerateTool;
 
@@ -57,7 +56,7 @@ public class GetValidateCodeAction extends HttpServlet {
 
 		// 获取需要的信息
 		String cellphone = request.getParameter("cellphone");
-		if (this.registerDao.isDuplicate(cellphone)) {
+		if (this.registerDao.isCellphoneDuplicate(cellphone)) {
 			msg = ErrorCode.E_DUBLICATE_ID.toString();
 		} else {
 			
@@ -110,7 +109,7 @@ public class GetValidateCodeAction extends HttpServlet {
 	 */
 	@Override
 	public void init() throws ServletException {
-		this.registerDao = new RegisterImpl();
+		this.registerDao = new RegisterDAO();
 		this.gnerateTool = new GenerateTool();
 	}
 

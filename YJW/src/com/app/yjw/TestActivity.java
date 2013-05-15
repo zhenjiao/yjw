@@ -41,7 +41,7 @@ import com.yjw.bean.DealBean;
 import com.yjw.bean.TransBean;
 import com.yjw.bean.UserBean;
 
-public class TestActivity extends Activity implements OnClickListener,OnItemClickListener,OnItemLongClickListener{
+public class TestActivity extends BaseActivity implements OnClickListener,OnItemClickListener,OnItemLongClickListener{
 	private ListView listView;
 	private ArrayAdapter<String> adapter;
 	private GetDealCtrl getdealctrl;
@@ -53,7 +53,7 @@ public class TestActivity extends Activity implements OnClickListener,OnItemClic
 			switch(mode){
 	        case DEAL:getdealctrl.syncDeal(0);break;
 	        case TRANS:getdealctrl.syncTrans(0);break;
-	        case USER:;//getdealctrl.syncTrans(0);break;
+	        //case USER:getdealctrl.syncUser();break;//getdealctrl.syncTrans(0);break;
 	        }
 			refresh();
 			return false;
@@ -64,25 +64,18 @@ public class TestActivity extends Activity implements OnClickListener,OnItemClic
 	Mode mode=Mode.USER;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
+		//G.cellphones.clear();
+		//G.transes.clear();
+		//G.deals.clear();
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.test_layout);
 		YJWControler.getInstance().setActivity(this);
-		listView = (ListView)findViewById(R.id.listView1);
-		listView.setOnItemClickListener(this);
-		listView.setOnItemLongClickListener(this);
-		adapter=new ArrayAdapter<String>(this, android.R.layout.simple_expandable_list_item_1,getData());
-        listView.setAdapter(adapter);
-        registerForContextMenu(listView);
-        findViewById(R.id.button1).setOnClickListener(this);
-        findViewById(R.id.button2).setOnClickListener(this);
-        findViewById(R.id.button3).setOnClickListener(this);
-        findViewById(R.id.button4).setOnClickListener(this);
-        findViewById(R.id.button5).setOnClickListener(this);
+		init();
         getdealctrl=new GetDealCtrl();
         switch(mode){
         case DEAL:getdealctrl.syncDeal(0);break;
         case TRANS:getdealctrl.syncTrans(0);break;
-        case USER:;//getdealctrl.syncTrans(0);break;
+        //case USER:getdealctrl.syncUser();break;
         }
         YJWControler.registerCallback(YJWMessage.ADD_DEAL_FAILED, refreshcallback);
         YJWControler.registerCallback(YJWMessage.ADD_DEAL_SUCCESS, refreshcallback);
@@ -91,6 +84,7 @@ public class TestActivity extends Activity implements OnClickListener,OnItemClic
         YJWControler.registerCallback(YJWMessage.ADD_TRANS_SUCCESS, refreshcallback);
         YJWControler.registerCallback(YJWMessage.DEL_TRANS_SUCCESS, refreshcallback);
         YJWControler.registerCallback(YJWMessage.CONF_TRANS_SUCCESS, refreshcallback);
+        YJWControler.registerCallback(YJWMessage.SYNC_USER_SUCCESS, refreshcallback);
 	}
 	
 	List<String> getData(){
@@ -103,33 +97,20 @@ public class TestActivity extends Activity implements OnClickListener,OnItemClic
 	}
 	
 	private List<String> getUser(){
-		G.cellphones.clear();
 		List<String> ret=new ArrayList<String>();
-		ContentResolver content = getContentResolver();
-		Cursor cur=content.query(ContactsContract.Contacts.CONTENT_URI, null, null, null, null);
-		while(cur.moveToNext()){
-			int idcol=cur.getColumnIndex(ContactsContract.Contacts._ID);
-			String id=cur.getString(idcol);
-			Cursor num=content.query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null,
-					ContactsContract.CommonDataKinds.Phone.CONTACT_ID+" = "+id, null, null); 
-			while(num.moveToNext()){
-				int numcol=num.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER);
-				String phone=num.getString(numcol);
-				phone=phone.replace(" ", "");
-				phone=phone.replace("-", "");
-				phone=phone.replace("+86", "");
-				G.cellphones.add(phone);
-				UserBean bean=G.getUser(phone);
-				if (bean==null){
-					ret.add(phone);
-				}else{
-					ret.add(bean.getName()+"\n"+phone);
-				}				
-				//BufferThread.addUser(phone);
+		for (String phone:G.cellphones){
+			UserBean u=G.getUser(phone);
+			if (u==null)
+				ret.add(phone);
+			else{
+				String s=u.getName();
+				if (u.getId()==null) s+=" *";
+				s+="\n";
+				s+=u.getCellphone();
+				ret.add(s);
 			}
-			num.close();
 		}
-		cur.close();
+		
 		return ret;
 	}
 	
@@ -230,6 +211,7 @@ public class TestActivity extends Activity implements OnClickListener,OnItemClic
 		}break;
 		case R.id.button4:{
 			mode=Mode.USER;
+			getdealctrl.syncUser();
 			refresh();
 		}break;
 		case R.id.button5:{
@@ -379,5 +361,20 @@ public class TestActivity extends Activity implements OnClickListener,OnItemClic
 		bean.setUsers(arUser);
 		YJWControler.Start(AddTransThread.class, bean);
 		super.onActivityResult(requestCode, resultCode, data);
+	}
+
+	@Override
+	protected void initViews() {
+		listView = (ListView)findViewById(R.id.listView1);
+		listView.setOnItemClickListener(this);
+		listView.setOnItemLongClickListener(this);
+		adapter=new ArrayAdapter<String>(this, android.R.layout.simple_expandable_list_item_1,getData());
+        listView.setAdapter(adapter);
+        registerForContextMenu(listView);
+        findViewById(R.id.button1).setOnClickListener(this);
+        findViewById(R.id.button2).setOnClickListener(this);
+        findViewById(R.id.button3).setOnClickListener(this);
+        findViewById(R.id.button4).setOnClickListener(this);
+        findViewById(R.id.button5).setOnClickListener(this);
 	}
 }

@@ -3,7 +3,7 @@ package com.yjw.sql.adapter;
 import com.yjw.bean.GetInfoBean;
 import com.yjw.sql.DealSQL;
 
-public class IfTransOwner extends WhereAdapter {
+public class IfTransOwner extends IfAdapter {
 	
 	int owner_id;
 	Boolean conf=null;

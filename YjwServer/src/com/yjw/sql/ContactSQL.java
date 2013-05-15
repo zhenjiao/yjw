@@ -2,28 +2,20 @@ package com.yjw.sql;
 
 import com.yjw.bean.GetInfoBean;
 
-public class UserSQL extends BaseSQL{
-	
-	@Override
-	public String fields() {
-		return "id,name,cellphone,email,timestamps,balance";
-	}
+public class ContactSQL extends BaseSQL {
 
 	@Override
 	public String DBName() {
-		return "yjw_user";
+		return "yjw_contact";
 	}
 
 	@Override
 	public String sync(GetInfoBean bean) {
-		return null;
+		return get(bean.getId());
 	}
-
-	public String getByCellphone(String cellphone) {
+	
+	public String getByCellphone(String cellphone){
 		return log("SELECT "+fields()+" FROM "+DBName()+" WHERE cellphone='"+cellphone+"'");
 	}
-	
-	
 
-	
 }

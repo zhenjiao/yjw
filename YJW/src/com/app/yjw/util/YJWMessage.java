@@ -78,4 +78,8 @@ public enum YJWMessage {
 	BUFFER_USER,
 	BUFFER_DEAL,
 	BUFFER_CHAT,
+	
+	/*message used in user thread */
+	SYNC_USER_SUCCESS,
+	SYNC_USER_FAILED,
 }

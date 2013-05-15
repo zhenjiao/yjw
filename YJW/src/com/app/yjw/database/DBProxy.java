@@ -12,8 +12,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import android.content.ContentResolver;
+import android.content.ContentUris;
 import android.content.ContentValues;
+import android.content.Context;
 import android.database.Cursor;
+import android.net.Uri;
+import android.provider.Contacts;
+import android.provider.Contacts.People;
+import android.provider.ContactsContract;
 import android.util.Log;
 
 import com.app.yjw.YJWActivity;
@@ -21,6 +28,7 @@ import com.app.yjw.pojo.MsgInfo;
 import com.app.yjw.pojo.MsgInfo.MsgType;
 import com.app.yjw.util.BeanPacker;
 import com.yjw.bean.AccountBean;
+import com.yjw.bean.UserBean;
 
 public class DBProxy {
 	
@@ -87,14 +95,7 @@ public class DBProxy {
 	 */
 	public static void insertNewAccount(AccountBean bean)
 	{
-		try
-		{
-			YJWActivity.database.execSQL(new BeanPacker(bean).insert(DBStatic.AccountTableName));
-		}
-		catch(Exception e)
-		{
-			Log.e("DBProxy", "Got exception on insertNewAccount:" + e.toString());
-		}
+		YJWActivity.database.execSQL(new BeanPacker(bean).insert(DBStatic.AccountTableName));
 	}
 	
 /*	public static void insertDeals(List<DealInfo> list, String type){
@@ -186,5 +187,109 @@ public class DBProxy {
 		}		
 		cur.close();
 		return ret;
+	}
+	
+	public static void execSQL(String sql){
+		YJWActivity.database.execSQL(sql);
+	}
+	
+	public static void inserUserToContactsBook(Context context,UserBean bean){
+		ContentResolver cr=context.getContentResolver();
+	    Cursor num=cr.query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null,
+				ContactsContract.CommonDataKinds.Phone.NUMBER+" = '"+bean.getCellphone()+"'", null, null);
+	    long rawContactsId = 0;
+	    if (num.getCount()<0) {
+	    	num.close();
+	    	return;
+	    }
+	    if (num.getCount()==0){
+	    
+	    	ContentValues values = new ContentValues ();  
+	    	Uri rawContactUri = cr.insert(ContactsContract.RawContacts.CONTENT_URI,values);   
+	    	long id = ContentUris.parseId(rawContactUri);   
+	    
+	    	values.clear();     
+	    	values.put(ContactsContract.CommonDataKinds.StructuredName.RAW_CONTACT_ID,id);     
+	    	values.put(ContactsContract.Data.MIMETYPE,ContactsContract.CommonDataKinds.StructuredName.CONTENT_ITEM_TYPE);   
+	    	values.put(ContactsContract.CommonDataKinds.StructuredName.DISPLAY_NAME,bean.getName());     
+	    	cr.insert(ContactsContract.Data.CONTENT_URI,values);   
+	    	values.clear();   
+	    	values.put(ContactsContract.CommonDataKinds.Phone.RAW_CONTACT_ID,id);     
+	    	values.put(ContactsContract.Data.MIMETYPE,ContactsContract.CommonDataKinds.Phone.CONTENT_ITEM_TYPE);   
+	    	values.put(ContactsContract.CommonDataKinds.Phone.NUMBER,bean.getCellphone());   
+	    	cr.insert(ContactsContract.Data.CONTENT_URI,values);
+	    	//Log.d("DBProxy","contact not exists");
+	    	rawContactsId=id;
+	    }else {
+	    	//Log.d("DBProxy","contact exists");
+	    	num.moveToFirst();
+		    rawContactsId=num.getLong(num.getColumnIndex(ContactsContract.Data.RAW_CONTACT_ID));
+	    }
+	    	    
+	    num.close();
+	    addContactToGroup(cr, rawContactsId, getGroupId(cr,null));
+	}
+	
+	
+	private static void addContactToGroup(ContentResolver rs,long contactId,long groupId) {
+        boolean b1 = ifExistContactInGroup(rs,contactId, groupId);
+        if (b1) {
+        		//Log.d("DBProxy","relation exists");
+                return;
+        } else {
+        	//Log.d("DBProxy","cid:"+contactId+", gid:"+groupId);
+        	ContentValues values = new ContentValues();
+        	values.put(ContactsContract.CommonDataKinds.GroupMembership.RAW_CONTACT_ID,contactId); 
+        	values.put(ContactsContract.CommonDataKinds.GroupMembership.GROUP_ROW_ID,groupId);
+        	values.put(ContactsContract.CommonDataKinds.GroupMembership.MIMETYPE,ContactsContract.CommonDataKinds.GroupMembership.CONTENT_ITEM_TYPE);
+        	Uri uri=rs.insert(ContactsContract.Data.CONTENT_URI, values);
+        	
+            //if (uri!=null) Log.d("DBProxy",uri.toString());
+            //else Log.d("DBProxy","URI NULL");
+        }
+	}
+
+	private static boolean ifExistContactInGroup(ContentResolver rs,long contactId, long groupId) {
+        String where = ContactsContract.CommonDataKinds.GroupMembership.MIMETYPE + " = '" + ContactsContract.CommonDataKinds.GroupMembership.CONTENT_ITEM_TYPE
+                        + "' AND " + ContactsContract.CommonDataKinds.GroupMembership.GROUP_ROW_ID + " = '" + groupId
+                        + "' AND " + ContactsContract.CommonDataKinds.GroupMembership.RAW_CONTACT_ID + " = '" + contactId + "'";
+        Cursor markCursor = rs.query(ContactsContract.Data.CONTENT_URI, null, where, null, null);
+        //new String[]{ContactsContract.Data.DISPLAY_NAME}
+        if (markCursor.moveToFirst()) {
+        		markCursor.close();
+                return true;
+        }else {
+        		markCursor.close();
+                return false;
+        }
+	}
+	
+	private static long getGroupId(ContentResolver cr,String groupname){
+		String name="YJW";
+		if (groupname!=null) name+=":"+groupname;
+		Cursor cur=cr.query(ContactsContract.Groups.CONTENT_URI, null, 
+				ContactsContract.Groups.TITLE + " = '" + name + "'", null, null);
+		if (cur.getCount()>0) {
+			cur.moveToFirst();
+			long id=cur.getLong(cur.getColumnIndex(ContactsContract.Groups._ID));
+			int deleted;
+			while((deleted=cur.getInt(cur.getColumnIndex(ContactsContract.Groups.DELETED)))==1){
+				//Log.d("DBProxy","group deleted: "+id);
+				if (!cur.moveToNext()) break;
+			}
+			if (deleted==0){				
+				//Log.d("DBProxy","group exists: "+id+" deleted:"+deleted);
+				cur.close();
+				return id;
+			}
+		}
+		ContentValues values = new ContentValues();		
+		//values.put(ContactsContract.Data.MIMETYPE,ContactsContract.Groups.CONTENT_ITEM_TYPE);
+		values.put(ContactsContract.Groups.TITLE, name);
+		Uri uri=cr.insert(ContactsContract.Groups.CONTENT_URI,values);
+		long id=ContentUris.parseId(uri);
+		//Log.d("DBProxy","group not exists: "+id);
+		cur.close();
+		return id;   
 	}
 }

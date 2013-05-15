@@ -1,6 +1,6 @@
 package com.yjw.sql.adapter;
 
-public class StaticAdapter extends WhereAdapter {
+public class StaticAdapter extends IfAdapter {
 	private String s;
 	
 	public StaticAdapter(String con) {

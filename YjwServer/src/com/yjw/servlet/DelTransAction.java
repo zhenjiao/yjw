@@ -8,13 +8,13 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.yjw.dao.EntityDAO;
-import com.yjw.impl.TransImpl;
+import com.yjw.dao.BaseDAO;
+import com.yjw.dao.TransDAO;
 import com.yjw.tool.ErrorCode;
 
 public class DelTransAction extends HttpServlet {
 
-	private EntityDAO transDao;
+	private BaseDAO transDao;
 	/**
 	 * Constructor of the object.
 	 */
@@ -93,7 +93,7 @@ public class DelTransAction extends HttpServlet {
 	 */
 	@Override
 	public void init(){
-		transDao = new TransImpl();
+		transDao = new TransDAO();
 	}
 
 }

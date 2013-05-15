@@ -104,7 +104,7 @@ public abstract class YJWBaseThread extends Thread {
 			}
 			return;
 		}
-		Log.i("backStr",backStr);
+		//Log.i("backStr",backStr);
 		back = backStr.split("&");
 		if (check(ErrorCode.valueOf(back[0]))){
 			msg=Message.obtain();

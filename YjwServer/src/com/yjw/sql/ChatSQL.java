@@ -1,38 +1,23 @@
 package com.yjw.sql;
 
-import com.yjw.bean.ChatBean;
-import com.yjw.tool.BeanPacker;
+import com.yjw.bean.GetInfoBean;
+import com.yjw.sql.adapter.AndAdapter;
+import com.yjw.sql.adapter.IfChatFrom;
+import com.yjw.sql.adapter.IfChatIsRead;
+import com.yjw.sql.adapter.IfChatTo;
 
-public class ChatSQL {
-	/* 加入一个chat */
-	public String setChat(ChatBean chatBean) {
-		/*return "Insert into yjw_chat(from_phone,to_user,content,deal_id) values('"
-				+ chatBean.getFrom_phone()
-				+ "','"
-				+ chatBean.getTo_phone()
-				+ "','"
-				+ chatBean.getContent()
-				+ "','"
-				+ chatBean.getDeal_id()
-				+ "')";*/
-		return new BeanPacker(chatBean).insert("yjw_chat");
-	}
-
-	/**
-	 * 获取未读的消息
-	 */
-	public String getUnreadMsg(String id) {
-		return "Select * from yjw_chat where is_read='0' and to_id=" + id + " order by deal,sub_time";
-	}
-
-	/**
-	 * 获取未读的消息的size
-	 */
-	public String getUnreadMsgCount(String id) {
-		return "select count(deal_id) from yjw_chat where is_read='0' and to_id=" + id;
+public class ChatSQL extends BaseSQL{
+	
+	public String sync(GetInfoBean bean) {
+		return sync(bean,new AndAdapter(
+				new IfChatFrom(bean.getId()),
+				new IfChatTo(bean.getId()),
+				new IfChatIsRead(bean.getArg1())
+				));
+				
 	}
 	
-	public String getPhoneNumber(String id){
-		return "select cellphone from yjw_user where id=" + id; 
+	public String DBName() {
+		return "yjw_chat";
 	}
 }
