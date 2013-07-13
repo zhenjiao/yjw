@@ -21,23 +21,29 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
   </head>
   
   <body>
-  	<a href="jsp/register.jsp">Register</a><br>
-    <a href="jsp/registerValidate.jsp">RegisterValidate</a><br>
-    <a href="jsp/reSendValidateMsg.jsp">ReSendValidateMsg</a><br>
-    <a href="jsp/finishRegister.jsp">FinishRegister</a><br>
-   	<a href="jsp/login.jsp">Login</a><br>
-   	<a href="jsp/addDeal.jsp">AddDeal</a><br>
+  	<!-- a href="jsp/addDeal.jsp">AddDeal</a><br-->
+    <!-- a href="jsp/addImage.jsp">AddImage</a><br-->
+    <a href="jsp/addDeal.jsp">AddDeal</a><br>
+    <!-- a href="jsp/addTrans.jsp">AddTrans</a><br -->
+   	<!-- a href="jsp/applyImageID.jsp">ApplyImageID</a><br-->
+   	<!-- a href="jsp/confTrans.jsp">ConfTrans</a><br-->
+   	<!-- a href="jsp/control.jsp">Control</a><br-->
    	<a href="jsp/delDeal.jsp">DelDeal</a><br>
-   	<a href="jsp/synvDeal.jsp">SyncDeal</a><br>
-    <a href="jsp/getReceivedDeal.jsp">getReceivedDeal</a><br>
+    <a href="jsp/delTrans.jsp">DelTrans</a><br>
    
-   	<a href="jsp/forwardDeal.jsp">forwardDeal</a><br>
-    <a href="jsp/setChatMsg.jsp">setChatMsg</a><br>
-    <a href="jsp/getMsg.jsp">getMsg</a><br>
-    <a href="jsp/getSharedUsers.jsp">getSharedUsers</a><br>
-    <a href="jsp/declineDeal.jsp">Decline Deal</a><br>
-    <a href="jsp/acceptDeal.jsp">Accept Deal</a><br>
-    <a href="jsp/Version.jsp">Version</a><br>
-    <a href="jsp/getBalance.jsp">getBalance</a><br>
+   	<a href="jsp/getDeal.jsp">GetDeal</a><br>
+    <!--  a href="jsp/getImage.jsp">GetImage</a><br-->
+    <a href="jsp/getTrans.jsp">GetTrans</a><br>
+    <a href="jsp/getUser.jsp">GetUser</a><br>
+    <!--a href="jsp/getPiece.jsp">GetPiece</a><br-->
+    <a href="jsp/getUserByPhone.jsp">GetUserByPhone</a><br>
+    <a href="jsp/getValidateCode.jsp">GetValidateCode</a><br>
+    <a href="jsp/login.jsp">Login</a><br>
+	<!-- a href="jsp/outputVersion.jsp">OutputVersion</a><br-->
+	<!-- a href="jsp/register.jsp">Register</a><br-->
+	<a href="jsp/syncDeal.jsp">SyncDeal</a><br>
+	<a href="jsp/syncTrans.jsp">SyncTrans</a><br>
+	<a href="jsp/syncUser.jsp">SyncUser</a><br>
+	<!-- a href="jsp/updateDeal.jsp">UpdateDeal</a><br-->
   </body>
 </html>
