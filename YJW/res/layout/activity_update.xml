@@ -22,7 +22,7 @@
         android:layout_alignParentLeft="true"
         android:text="download。。。" />
 
-    <com.app.yjw.widget.textProgressBar
+    <com.yjw.widget.textProgressBar
         android:id="@+id/myBar"
         android:layout_width="150dp"
         android:layout_height="150dp"

@@ -75,11 +75,11 @@
                 android:background="@color/white" />
         </LinearLayout>
 
-        <com.app.yjw.widget.DealExpandListView
+        <com.yjw.widget.DealExpandListView
             android:id="@+id/listview"
             android:layout_width="fill_parent"
             android:layout_height="fill_parent" >
-        </com.app.yjw.widget.DealExpandListView>
+        </com.yjw.widget.DealExpandListView>
     </LinearLayout>
 
 </LinearLayout>

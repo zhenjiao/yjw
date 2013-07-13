@@ -171,6 +171,55 @@
     <servlet-name>SyncUserAction</servlet-name>
     <servlet-class>com.yjw.servlet.SyncUserAction</servlet-class>
   </servlet>
+  <servlet>
+    <description>This is the description of my J2EE component</description>
+    <display-name>This is the display name of my J2EE component</display-name>
+    <servlet-name>ControlAction</servlet-name>
+    <servlet-class>com.yjw.servlet.ControlAction</servlet-class>
+  </servlet>
+  <servlet>
+    <description>This is the description of my J2EE component</description>
+    <display-name>This is the display name of my J2EE component</display-name>
+    <servlet-name>ApplyImageID</servlet-name>
+    <servlet-class>com.yjw.servlet.ApplyImageID</servlet-class>
+  </servlet>
+  <servlet>
+    <description>This is the description of my J2EE component</description>
+    <display-name>This is the display name of my J2EE component</display-name>
+    <servlet-name>AddImageAction</servlet-name>
+    <servlet-class>com.yjw.servlet.AddImageAction</servlet-class>
+  </servlet>
+  <servlet>
+    <description>This is the description of my J2EE component</description>
+    <display-name>This is the display name of my J2EE component</display-name>
+    <servlet-name>GetImageAction</servlet-name>
+    <servlet-class>com.yjw.servlet.GetImageAction</servlet-class>
+  </servlet>
+  <servlet>
+    <description>This is the description of my J2EE component</description>
+    <display-name>This is the display name of my J2EE component</display-name>
+    <servlet-name>GetPieceAction</servlet-name>
+    <servlet-class>com.yjw.servlet.GetPieceAction</servlet-class>
+  </servlet>
+  <servlet>
+    <description>This is the description of my J2EE component</description>
+    <display-name>This is the display name of my J2EE component</display-name>
+    <servlet-name>AddPieceAction</servlet-name>
+    <servlet-class>com.yjw.servlet.AddPieceAction</servlet-class>
+  </servlet>
+  <servlet>
+    <description>This is the description of my J2EE component</description>
+    <display-name>This is the display name of my J2EE component</display-name>
+    <servlet-name>ResultAction</servlet-name>
+    <servlet-class>com.yjw.servlet.ResultAction</servlet-class>
+  </servlet>
+
+
+
+
+
+
+
 
 
 
@@ -305,6 +354,34 @@
   <servlet-mapping>
     <servlet-name>SyncUserAction</servlet-name>
     <url-pattern>/SyncUserAction</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>ControlAction</servlet-name>
+    <url-pattern>/ControlAction</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>ApplyImageID</servlet-name>
+    <url-pattern>/ApplyImageID</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>AddImageAction</servlet-name>
+    <url-pattern>/AddImageAction</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>GetImageAction</servlet-name>
+    <url-pattern>/GetImageAction</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>GetPieceAction</servlet-name>
+    <url-pattern>/GetPieceAction</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>AddPieceAction</servlet-name>
+    <url-pattern>/AddPieceAction</url-pattern>
+  </servlet-mapping>
+  <servlet-mapping>
+    <servlet-name>ResultAction</servlet-name>
+    <url-pattern>/ResultAction</url-pattern>
   </servlet-mapping>
  <welcome-file-list>
   <welcome-file>index.jsp</welcome-file>

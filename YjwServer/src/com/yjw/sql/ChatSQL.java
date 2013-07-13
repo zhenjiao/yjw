@@ -17,7 +17,7 @@ public class ChatSQL extends BaseSQL{
 				
 	}
 	
-	public String DBName() {
+	public String Table() {
 		return "yjw_chat";
 	}
 }

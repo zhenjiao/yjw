@@ -8,13 +8,15 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.yjw.bean.Bean;
 import com.yjw.bean.RegisterBean;
 import com.yjw.bean.UserBean;
 import com.yjw.dao.RegisterDAO;
-import com.yjw.tool.BeanPacker;
-import com.yjw.tool.ErrorCode;
+import com.yjw.util.ErrorCode;
 
 public class RegisterAction extends HttpServlet {
+
+	private static final long serialVersionUID = 8674625371525628805L;
 	//private JdbcTemplate jdbcTemplate;
 	private RegisterDAO registerDAO;
 	/**
@@ -58,12 +60,11 @@ public class RegisterAction extends HttpServlet {
 		String msg = "";
 		
 		
-		BeanPacker packer = new BeanPacker(request.getParameter("bean"));
-		RegisterBean rbean =(RegisterBean)packer.getBean();
+		RegisterBean rbean = Bean.Pack(request.getParameter("bean"),RegisterBean.class);
 		String sid = rbean.getSid();
 		String code = rbean.getValidateCode();
 		if(this.registerDAO.validate(sid, code)){
-			UserBean u=(UserBean)packer.transTo(UserBean.class);
+			UserBean u=rbean.to(UserBean.class);
 			if(this.registerDAO.register(u)){
 				msg = ErrorCode.E_SUCCESS.toString();
 			}else{

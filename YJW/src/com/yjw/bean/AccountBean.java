@@ -1,6 +1,6 @@
 package com.yjw.bean;
 
-public class AccountBean {
+public class AccountBean extends Bean{
 	private String cellphone;
 	private String password;
 	

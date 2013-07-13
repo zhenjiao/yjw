@@ -4,13 +4,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import com.yjw.bean.Bean;
 import com.yjw.bean.ContactBean;
 import com.yjw.bean.ContactsBean;
 import com.yjw.bean.GetInfoBean;
 import com.yjw.bean.UserBean;
-import com.yjw.sql.BaseSQL;
 import com.yjw.sql.ContactSQL;
-import com.yjw.tool.BeanPacker;
 
 public class ContactDAO extends BaseDAO {
 
@@ -19,23 +18,24 @@ public class ContactDAO extends BaseDAO {
 	}
 
 	@Override
-	public Class<?> getBeanClass() {
+	public Class<? extends Bean> getBeanClass() {
 		return ContactBean.class;
 	}
 	
+	@SuppressWarnings("unchecked")
 	@Override
-	public BeanPacker get(int id) {
+	public Bean get(int id) {
 		List<Map<String,Object>> list=jdbcTemplate.queryForList(sql.get(id));
 		List<ContactBean> tl=new ArrayList<ContactBean>();
 		for (Map<String,?> map:list){
-			ContactBean bean = (ContactBean)new BeanPacker(map,ContactBean.class).getBean();
+			ContactBean bean = Bean.Pack(map,ContactBean.class);
 			tl.add(bean);
 		}
 		ContactBean[] beans=new ContactBean[tl.size()];
 		tl.toArray(beans);
 		ContactsBean ret=new ContactsBean();
 		ret.setContacts(beans);
-		return new BeanPacker(ret);
+		return ret;
 	}
 
 	@Override
@@ -44,27 +44,27 @@ public class ContactDAO extends BaseDAO {
 	}
 	
 	@Override
-	public int add(BeanPacker packer) {
-		super.add(packer);
-		return addBack(packer);
+	public int add(Bean bean) {
+		super.add(bean);
+		return addBack(bean);
 	}
 	
-	public int addBack(BeanPacker packer){
+	public int addBack(Bean _bean){
 		UserDAO userDao=new UserDAO();
-		ContactBean bean=(ContactBean)packer.getBean();
-		BeanPacker tarpacker=userDao.getByCellphone(bean.getCellphone());
-		if (tarpacker==null) return -1;
-		UserBean self=(UserBean)userDao.get(bean.getId()).getBean();
-		UserBean target=(UserBean)tarpacker.getBean();
+		ContactBean bean=(ContactBean)_bean;
+		UserBean target=(UserBean)userDao.getByCellphone(bean.getCellphone());
+		if (target==null) return -1;
+		UserBean self=(UserBean)userDao.get(bean.getId());
 		ContactBean back=new ContactBean();
 		back.setCellphone(self.getCellphone());
 		back.setId(target.getId());
-		return super.add(new BeanPacker(back));	
+		return super.add(back);	
 	}
 	
+	@SuppressWarnings("unchecked")
 	public int addAllBack(String cellphone){
 		List<Map<String,Object>> list=jdbcTemplate.queryForList(((ContactSQL)sql).getByCellphone(cellphone));
-		for (Map<String,?> map:list) addBack(new BeanPacker(map,ContactBean.class));
+		for (Map<String,?> map:list) addBack(Bean.Pack(map,ContactBean.class));
 		return 0;
 	}
 }

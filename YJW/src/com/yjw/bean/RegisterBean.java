@@ -1,6 +1,6 @@
 package com.yjw.bean;
 
-public class RegisterBean {
+public class RegisterBean extends Bean {
 	private String name;
 	private String cellphone;
 	private String password;

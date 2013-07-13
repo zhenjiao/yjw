@@ -8,12 +8,12 @@ import org.springframework.dao.IncorrectResultSizeDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 import com.yjw.bean.AccountBean;
+import com.yjw.bean.Bean;
 import com.yjw.bean.UserBean;
 import com.yjw.bean.ValidationBean;
 import com.yjw.sql.RegisterSQL;
-import com.yjw.tool.BeanPacker;
-import com.yjw.tool.ErrorCode;
-import com.yjw.tool.TemplateGetter;
+import com.yjw.util.ErrorCode;
+import com.yjw.util.TemplateGetter;
 
 /**
  * 注册的封装代码
@@ -66,13 +66,14 @@ public class RegisterDAO {
 	}	
 
 	// 登录
-	public String logon(AccountBean bean) {
+	@SuppressWarnings("unchecked")
+	public String login(AccountBean bean) {
 		String msg = "";
 		if (isCellphoneDuplicate(bean.getCellphone())) {
-			String sqlstr=sql.Logon(bean);
+			String sqlstr=sql.Login(bean);
 			try{
-				Map map= this.jdbcTemplate.queryForMap(sqlstr);
-				msg = ErrorCode.E_SUCCESS+"&"+new BeanPacker(map,UserBean.class);
+				Map<String,?> map= this.jdbcTemplate.queryForMap(sqlstr);
+				msg = ErrorCode.E_SUCCESS+"&"+Bean.Pack(map,UserBean.class);
 			}catch(IncorrectResultSizeDataAccessException e){		
 				msg = ErrorCode.E_LOGIN_FAILED.toString();
 			}catch(DataAccessException e){
@@ -88,18 +89,18 @@ public class RegisterDAO {
 
 	// 插入验证信息
 	public boolean insertValidateCode(ValidationBean bean) {
-		boolean flag = false;
 		String insertSQL = sql.insertValidateCode(bean);
 		int insertReturn = this.jdbcTemplate.update(insertSQL);
 		return insertReturn > 0;
 	}
 	
+	@SuppressWarnings("unchecked")
 	public boolean validate(String sid, String code) {
 		boolean flag = false;
 		String getValidateRecordSQL = sql.validate(sid);
-		List list = this.jdbcTemplate.queryForList(getValidateRecordSQL);
+		List<Map<String,Object>> list = this.jdbcTemplate.queryForList(getValidateRecordSQL);
 		if (list.size() == 1) {
-			Map map = (Map) list.get(0);
+			Map<String,?> map = list.get(0);
 			if (code.equals(map.get("validation_code"))) {
 					flag = true;
 			}

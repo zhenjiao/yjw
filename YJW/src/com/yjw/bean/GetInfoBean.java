@@ -2,7 +2,7 @@ package com.yjw.bean;
 
 import java.sql.Timestamp;
 
-public class GetInfoBean {
+public class GetInfoBean extends Bean {
 	private int id;
 	private Integer page;
 	private Integer arg1;

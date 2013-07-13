@@ -2,22 +2,23 @@ package com.yjw.dao;
 
 import java.util.Map;
 
+import com.yjw.bean.Bean;
 import com.yjw.bean.UserBean;
 import com.yjw.sql.UserSQL;
-import com.yjw.tool.BeanPacker;
 
 public class UserDAO extends BaseDAO {
 	public UserDAO() {
 		super(new UserSQL());
 	}
 	@Override
-	public Class<?> getBeanClass() {
+	public Class<? extends Bean> getBeanClass() {
 		return UserBean.class;
 	}
-	public BeanPacker getByCellphone(String cellphone) {
+	@SuppressWarnings("unchecked")
+	public Bean getByCellphone(String cellphone) {
 		try{
 			Map<String,?> map = jdbcTemplate.queryForMap(((UserSQL)sql).getByCellphone(cellphone));
-			return new BeanPacker(map,UserBean.class);
+			return Bean.Pack(map,UserBean.class);
 		}catch(Exception e){
 				return null;
 		}

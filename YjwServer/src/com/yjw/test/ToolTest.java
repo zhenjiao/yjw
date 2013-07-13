@@ -2,7 +2,7 @@ package com.yjw.test;
 
 import org.junit.Test;
 
-import com.yjw.tool.GenerateTool;
+import com.yjw.util.GenerateTool;
 
 public class ToolTest {
 

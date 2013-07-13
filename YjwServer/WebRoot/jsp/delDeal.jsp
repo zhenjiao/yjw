@@ -23,9 +23,10 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
   </head>
   
   <body>
-      <form action="DelDealAction" method="post">
-dealId<input type="text" name="dealid"/></br>
-
- <input type="submit">
+    <form action="jsp/PackerJsp.jsp" method="post">
+		Deal_id:<input type="text" name="id"/></br>
+		<input type="hidden" name="_action" value="DelDealAction"/>
+ 		<input type="submit">
+	</form>
   </body>
 </html>

@@ -13,10 +13,10 @@ import org.springframework.jdbc.core.PreparedStatementCreator;
 import org.springframework.jdbc.support.GeneratedKeyHolder;
 import org.springframework.jdbc.support.KeyHolder;
 
+import com.yjw.bean.Bean;
 import com.yjw.bean.GetInfoBean;
 import com.yjw.sql.BaseSQL;
-import com.yjw.tool.BeanPacker;
-import com.yjw.tool.TemplateGetter;
+import com.yjw.util.TemplateGetter;
 
 public abstract class BaseDAO {
 
@@ -28,26 +28,34 @@ public abstract class BaseDAO {
 		this.sql = sql;
 	}
 
-	/* Add Deal */
-	public int add(BeanPacker packer) {
+	public int add(Bean bean) {
 		try{
-			final BeanPacker PACKER=packer;
+			final Bean BEAN=bean;
 			KeyHolder keyHolder = new GeneratedKeyHolder();
 			//sql.add(packer)
 			int ret=jdbcTemplate.update(new PreparedStatementCreator() {
 				public PreparedStatement createPreparedStatement(Connection connection)	throws SQLException {
-					 return connection.prepareStatement(sql.add(PACKER),Statement.RETURN_GENERATED_KEYS);
+					 return connection.prepareStatement(sql.add(BEAN),Statement.RETURN_GENERATED_KEYS);
 				}
 			},keyHolder);
 			if (ret==-1)return -1; else
 			if (ret==0) return 0; else
-			return keyHolder.getKey().intValue();
+			if (keyHolder!=null&&keyHolder.getKey()!=null)
+				return keyHolder.getKey().intValue();
+			else return ret;
 		}catch(Exception e){
 			return -1;
 		}
-		
 	}
-	/* Delete Deal */
+	
+	public int update(Bean bean){
+		try{
+			return jdbcTemplate.update(sql.update(bean));
+		}catch(Exception e){
+			return -1;
+		}
+	}
+	
 	public boolean del(int id) {
 		boolean flag = false;
 		if (this.jdbcTemplate.update(this.sql.del(id)) != 0) {
@@ -56,7 +64,8 @@ public abstract class BaseDAO {
 		return flag;
 	}
 
-	/* Get User's Deal */
+
+	@SuppressWarnings("unchecked")
 	public List<Integer> sync(GetInfoBean bean) {
 		String sqlstr=sql.sync(bean);
 		System.out.println(sqlstr);
@@ -68,15 +77,16 @@ public abstract class BaseDAO {
 		return ret;
 	}
 	
-	public BeanPacker get(int id) {
+	@SuppressWarnings("unchecked")
+	public Bean get(int id) {
 		try{
 		Map<String,?> map = jdbcTemplate.queryForMap(sql.get(id));
-		return new BeanPacker(map,getBeanClass());
+		return Bean.Pack(map,getBeanClass());
 		}catch(Exception e){
 			return null;
 		}
 	}
 	
-	public abstract Class<?> getBeanClass();
+	public abstract Class<? extends Bean> getBeanClass();
 
 }

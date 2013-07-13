@@ -1,6 +1,6 @@
 package com.yjw.bean;
 
-public class AddTransBackLogBean {
+public class AddTransBackLogBean  extends Bean{
 	private UserBean[] not_reg;
 	private UserBean[] overtrans;
 	private UserBean[] failed;

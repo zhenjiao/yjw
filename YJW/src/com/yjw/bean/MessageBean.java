@@ -1,6 +1,6 @@
 package com.yjw.bean;
 
-public class MessageBean {
+public class MessageBean extends Bean {
 	public enum MsgType {from, to}
 	
 	private MsgType type;

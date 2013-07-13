@@ -11,7 +11,7 @@ public class DealSQL extends BaseSQL{
 	}	
 	
 	@Override
-	public String DBName() {		
+	public String Table() {		
 		return "yjw_deal";
 	}
 }

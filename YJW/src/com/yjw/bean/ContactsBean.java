@@ -1,6 +1,6 @@
 package com.yjw.bean;
 
-public class ContactsBean {
+public class ContactsBean extends Bean {
 	
 	private ContactBean[] contacts;
 

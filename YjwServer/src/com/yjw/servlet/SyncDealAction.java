@@ -9,14 +9,15 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.yjw.bean.Bean;
 import com.yjw.bean.GetInfoBean;
 import com.yjw.dao.BaseDAO;
 import com.yjw.dao.DealDAO;
-import com.yjw.tool.BeanPacker;
-import com.yjw.tool.ErrorCode;
+import com.yjw.util.ErrorCode;
 
 public class SyncDealAction extends HttpServlet {
 	
+	private static final long serialVersionUID = 8675205274901582692L;
 	private BaseDAO dealDao; 
 	/**
 	 * Constructor of the object.
@@ -52,7 +53,7 @@ public class SyncDealAction extends HttpServlet {
 		request.setCharacterEncoding("UTF-8");
 		response.setCharacterEncoding("UTF-8");
 		PrintWriter out = response.getWriter();
-		GetInfoBean bean=(GetInfoBean)new BeanPacker(request.getParameter("bean")).getBean();
+		GetInfoBean bean=Bean.Pack(request.getParameter("bean"),GetInfoBean.class);
 		List<Integer> ints=dealDao.sync(bean);
 		if (ints.size()==0){
 			out.print(ErrorCode.E_NULL_DEAL);

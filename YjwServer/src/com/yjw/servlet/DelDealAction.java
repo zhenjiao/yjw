@@ -10,9 +10,11 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.yjw.dao.BaseDAO;
 import com.yjw.dao.DealDAO;
-import com.yjw.tool.ErrorCode;
+import com.yjw.util.ErrorCode;
 
 public class DelDealAction extends HttpServlet {
+
+	private static final long serialVersionUID = 9194792450476940538L;
 	private BaseDAO dealDao;
 	/**
 	 * Constructor of the object.

@@ -8,13 +8,14 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.yjw.bean.Bean;
 import com.yjw.dao.BaseDAO;
 import com.yjw.dao.DealDAO;
-import com.yjw.tool.BeanPacker;
-import com.yjw.tool.ErrorCode;
+import com.yjw.util.ErrorCode;
 
 public class GetDealAction extends HttpServlet {
 	
+	private static final long serialVersionUID = 7795676210198803670L;
 	private BaseDAO dealDao;
 	/**
 	 * Constructor of the object.
@@ -55,12 +56,13 @@ public class GetDealAction extends HttpServlet {
 		out.print(ErrorCode.E_SUCCESS);
 		for (Integer i=0;i<size;++i){
 			int id = Integer.valueOf(request.getParameter(i.toString()));
-			BeanPacker packer=dealDao.get(id);
-			if (packer!=null){
+			Bean bean=dealDao.get(id);
+			if (bean!=null){
 				out.print("&");			
-				out.print(packer);
+				out.print(bean);
 			}
 		}		
+		
 		out.flush();
 		out.close();
 	}

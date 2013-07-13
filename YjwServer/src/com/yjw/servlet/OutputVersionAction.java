@@ -1,9 +1,5 @@
 package com.yjw.servlet;
-/*
- * 
- * by JinYuan Yang
- * 
- */
+
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.ObjectOutputStream;
@@ -14,8 +10,6 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
-import com.yjw.bean.Version;
 
 public class OutputVersionAction extends HttpServlet {
 
@@ -63,10 +57,10 @@ public class OutputVersionAction extends HttpServlet {
 		
 		//String updateurl=request.getParameter("updateurl");
 
-		Version object = new Version();
+		//Version object = new Version();
 		byte[] bytData = new byte[] {};
 		try {
-			bytData = getBytesFromObject(object);
+			//bytData = getBytesFromObject(object);
 		} catch (Exception e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();

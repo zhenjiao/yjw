@@ -12,6 +12,7 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.yjw.bean.AddTransBackLogBean;
 import com.yjw.bean.AddTransBean;
+import com.yjw.bean.Bean;
 import com.yjw.bean.ContactBean;
 import com.yjw.bean.DealBean;
 import com.yjw.bean.TransBean;
@@ -21,8 +22,7 @@ import com.yjw.dao.ContactDAO;
 import com.yjw.dao.DealDAO;
 import com.yjw.dao.TransDAO;
 import com.yjw.dao.UserDAO;
-import com.yjw.tool.BeanPacker;
-import com.yjw.tool.ErrorCode;
+import com.yjw.util.ErrorCode;
 
 public class AddTransAction extends HttpServlet {
 
@@ -74,8 +74,7 @@ public class AddTransAction extends HttpServlet {
 		response.setCharacterEncoding("UTF-8");
 		PrintWriter out = response.getWriter();
 		
-		BeanPacker packer = new BeanPacker(request.getParameter("bean"));
-		AddTransBean bean =(AddTransBean)packer.getBean();
+		AddTransBean bean =Bean.Pack(request.getParameter("bean"),AddTransBean.class);
 		Set<UserBean> failed=new HashSet<UserBean>();
 		Set<UserBean> unreg=new HashSet<UserBean>();
 		Set<UserBean> overtrans=new HashSet<UserBean>();
@@ -84,12 +83,11 @@ public class AddTransAction extends HttpServlet {
 			ContactBean c=new ContactBean();
 			c.setCellphone(user.getCellphone());
 			c.setId(bean.getFromid());
-			contactDao.add(new BeanPacker(c));
+			contactDao.add(c);
 			if (user.getId()==null){
-				BeanPacker upacker=userDao.getByCellphone(user.getCellphone());
-				if (upacker!=null){
-					UserBean u=(UserBean)upacker.getBean();
-					userid=u.getId();
+				UserBean ubean=(UserBean) userDao.getByCellphone(user.getCellphone());
+				if (ubean!=null){
+					userid=ubean.getId();
 				}
 			}else userid = user.getId();
 			
@@ -100,9 +98,8 @@ public class AddTransAction extends HttpServlet {
 			if (bean.getTranses()!=null){
 				for (TransBean trans:bean.getTranses()){
 					TransBean t=new TransBean();
-					BeanPacker p=dealDao.get(trans.getDeal_id());
-					if (p==null) { failed.add(user); continue;}
-					DealBean d=(DealBean)p.getBean();
+					DealBean d=(DealBean)dealDao.get(trans.getDeal_id());
+					if (d==null) { failed.add(user); continue;}
 					if (trans.getTimes()>=d.getMaxtrans()){	overtrans.add(user);continue; }
 					t.setFrom_id(bean.getFromid());
 					t.setDeal_id(d.getId());
@@ -111,7 +108,7 @@ public class AddTransAction extends HttpServlet {
 						t.setTimes(trans.getTimes()+1);
 					else
 						t.setConfirmed(1);
-					if (transDao.add(new BeanPacker(t))==-1) failed.add(user);
+					if (transDao.add(t)==-1) failed.add(user);
 				}
 			}
 			if (bean.getDeals()!=null){
@@ -121,7 +118,7 @@ public class AddTransAction extends HttpServlet {
 					t.setDeal_id(deals.getId());
 					t.setTo_id(userid);
 					t.setConfirmed(1);
-					if (transDao.add(new BeanPacker(t))==-1) failed.add(user);
+					if (transDao.add(t)==-1) failed.add(user);
 				}
 			}
 		}
@@ -140,7 +137,7 @@ public class AddTransAction extends HttpServlet {
 			blog.setFailed(arFailed);
 			blog.setNot_reg(arUnreg);
 			blog.setOvertrans(arOvertrans);
-			out.print(new BeanPacker(blog));
+			out.print(blog);
 		}
 		out.flush();
 		out.close();

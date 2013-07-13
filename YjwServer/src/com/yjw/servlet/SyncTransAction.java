@@ -9,14 +9,15 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.yjw.bean.Bean;
 import com.yjw.bean.GetInfoBean;
 import com.yjw.dao.BaseDAO;
 import com.yjw.dao.TransDAO;
-import com.yjw.tool.BeanPacker;
-import com.yjw.tool.ErrorCode;
+import com.yjw.util.ErrorCode;
 
 public class SyncTransAction extends HttpServlet {
 	
+	private static final long serialVersionUID = -1947173821210714373L;
 	private BaseDAO transDao;
 
 	/**
@@ -51,7 +52,7 @@ public class SyncTransAction extends HttpServlet {
 		request.setCharacterEncoding("UTF-8");
 		response.setCharacterEncoding("UTF-8");
 		PrintWriter out = response.getWriter();
-		GetInfoBean bean=(GetInfoBean)new BeanPacker(request.getParameter("bean")).getBean();
+		GetInfoBean bean=Bean.Pack(request.getParameter("bean"),GetInfoBean.class);
 		List<Integer> ints=transDao.sync(bean);
 		if (ints.size()==0){
 			out.print(ErrorCode.E_NULL_DEAL);

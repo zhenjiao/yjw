@@ -1,6 +1,6 @@
 package com.yjw.bean;
 
-public class ContactBean {
+public class ContactBean extends Bean {
 	private Integer id;
 	private String cellphone;
 	public Integer getId() {

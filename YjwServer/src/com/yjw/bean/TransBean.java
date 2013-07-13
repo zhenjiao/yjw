@@ -2,7 +2,7 @@ package com.yjw.bean;
 
 import java.sql.Timestamp;
 
-public class TransBean {
+public class TransBean extends Bean {
 	private Integer id;
 	private Integer deal_id;
 	private Integer from_id;

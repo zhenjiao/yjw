@@ -10,8 +10,8 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.yjw.bean.ValidationBean;
 import com.yjw.dao.RegisterDAO;
-import com.yjw.tool.ErrorCode;
-import com.yjw.tool.GenerateTool;
+import com.yjw.util.ErrorCode;
+import com.yjw.util.GenerateTool;
 
 public class GetValidateCodeAction extends HttpServlet {
 	

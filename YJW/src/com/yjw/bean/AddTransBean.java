@@ -1,6 +1,6 @@
 package com.yjw.bean;
 
-public class AddTransBean {
+public class AddTransBean extends Bean {
 	private int fromid;
 	private UserBean[] users;
 	private DealBean[] deals;

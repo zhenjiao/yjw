@@ -1,6 +1,6 @@
 package com.yjw.bean;
 
-public class ChatBean {
+public class ChatBean  extends Bean{
 	
 	private Integer id;
 	private Integer from_id;

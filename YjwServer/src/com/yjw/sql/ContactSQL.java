@@ -5,7 +5,7 @@ import com.yjw.bean.GetInfoBean;
 public class ContactSQL extends BaseSQL {
 
 	@Override
-	public String DBName() {
+	public String Table() {
 		return "yjw_contact";
 	}
 
@@ -15,7 +15,7 @@ public class ContactSQL extends BaseSQL {
 	}
 	
 	public String getByCellphone(String cellphone){
-		return log("SELECT "+fields()+" FROM "+DBName()+" WHERE cellphone='"+cellphone+"'");
+		return log("SELECT "+fields()+" FROM "+Table()+" WHERE cellphone='"+cellphone+"'");
 	}
 
 }

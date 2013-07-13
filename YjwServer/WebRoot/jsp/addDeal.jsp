@@ -23,19 +23,14 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
   </head>
   
   <body>
-         <form action="AddDealAction" method="post">
-sid:<input type="text" name="sid"/></br>
-title：<input type="text" name="title"/></br>
-content:<input type="text" name="content"/></br>
-fee：<input type="text" name="fee"/></br>
-<!-- commission：<input type="text" name="commission"/></br>-->
-phoneToShare：<input type="text" name="phoneToShare"/></br>
-expire_date：<input type="text" name="expire_date"/></br>
-reqConfirm：<select name="reqConfirm">
-<option value="Yes">Yes</option>
-<option value="No">No</option>
-
-</select></br>
- <input type="submit">
+         <form action="jsp/PackerJsp.jsp" method="post">
+			owner_id:<input type="text" name="owner_id"/><br/>
+			title：<input type="text" name="title"/><br/>
+			content:<input type="text" name="content"/><br/>
+			fee：<input type="text" name="fee"/><br/>
+			expire_date：<input type="text" name="expire_date"/><br/>
+			<input type="hidden" name="_class" value="DealBean"/>
+			<input type="hidden" name="_action" value="AddDealAction"/>
+ 			<input type="submit">
   </form></body>
 </html>

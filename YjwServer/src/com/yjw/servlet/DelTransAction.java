@@ -10,10 +10,11 @@ import javax.servlet.http.HttpServletResponse;
 
 import com.yjw.dao.BaseDAO;
 import com.yjw.dao.TransDAO;
-import com.yjw.tool.ErrorCode;
+import com.yjw.util.ErrorCode;
 
 public class DelTransAction extends HttpServlet {
 
+	private static final long serialVersionUID = 6774796800604416621L;
 	private BaseDAO transDao;
 	/**
 	 * Constructor of the object.

@@ -23,9 +23,12 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
   </head>
   
   <body>
-      <form action="LoginAction" method="post">
- cellphone:<input type="text" name="cellphone"/></br>
- password：<input type="text" name="password"/></br>
- <input type="submit">
+	<form action="jsp/PackerJsp.jsp" method="post">
+		cellphone:<input type="text" name="cellphone"/></br>
+		password：<input type="password" name="password"/></br>
+		<input type="hidden" name="_class" value="AccountBean"/>
+		<input type="hidden" name="_action" value="LoginAction"/>
+		<input type="submit">
+	</form>
   </body>
 </html>

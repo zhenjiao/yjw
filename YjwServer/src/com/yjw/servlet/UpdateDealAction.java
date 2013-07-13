@@ -10,6 +10,8 @@ import javax.servlet.http.HttpServletResponse;
 
 public class UpdateDealAction extends HttpServlet {
 
+	private static final long serialVersionUID = -5920866284584646150L;
+
 	/**
 	 * Constructor of the object.
 	 */

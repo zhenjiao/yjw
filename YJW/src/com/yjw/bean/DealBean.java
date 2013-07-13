@@ -3,7 +3,7 @@ package com.yjw.bean;
 import java.sql.Date;
 import java.sql.Timestamp;
 
-public class DealBean {
+public class DealBean extends Bean {
 	private Integer id;
 	private Integer owner_id;
 	private String title;

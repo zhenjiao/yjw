@@ -8,15 +8,14 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.springframework.jdbc.core.JdbcTemplate;
-
 import com.yjw.bean.AccountBean;
+import com.yjw.bean.Bean;
 import com.yjw.dao.RegisterDAO;
-import com.yjw.tool.BeanPacker;
 
 public class LoginAction extends HttpServlet {
+
+	private static final long serialVersionUID = -410789223476599105L;
 	private RegisterDAO registerDao;
-	private JdbcTemplate jdbcTemplate;
 
 	/**
 	 * Constructor of the object.
@@ -61,9 +60,10 @@ public class LoginAction extends HttpServlet {
 		//准备数据
 		//String cellphone = request.getParameter("cellphone");
 		//String password = request.getParameter("password");
-		AccountBean bean = (AccountBean)new	BeanPacker(request.getParameter("bean")).getBean();		
+		System.out.println(request.getParameterMap());
+		AccountBean bean = Bean.Pack(request.getParameter("bean"),AccountBean.class);		
 		//登录并接受返回信息
-		msg = registerDao.logon(bean);
+		msg = registerDao.login(bean);
 		out.println(msg);
 		out.flush();
 		out.close();

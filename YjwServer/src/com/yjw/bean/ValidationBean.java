@@ -1,6 +1,6 @@
 package com.yjw.bean;
 
-public class ValidationBean {
+public class ValidationBean extends Bean {
 	private String sid;
 	private String validation_code;
 	private String timestamp;

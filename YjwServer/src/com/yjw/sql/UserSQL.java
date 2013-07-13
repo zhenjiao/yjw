@@ -10,7 +10,7 @@ public class UserSQL extends BaseSQL{
 	}
 
 	@Override
-	public String DBName() {
+	public String Table() {
 		return "yjw_user";
 	}
 
@@ -20,7 +20,7 @@ public class UserSQL extends BaseSQL{
 	}
 
 	public String getByCellphone(String cellphone) {
-		return log("SELECT "+fields()+" FROM "+DBName()+" WHERE cellphone='"+cellphone+"'");
+		return log("SELECT "+fields()+" FROM "+Table()+" WHERE cellphone='"+cellphone+"'");
 	}
 	
 	

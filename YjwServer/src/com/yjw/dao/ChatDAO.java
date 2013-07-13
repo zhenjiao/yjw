@@ -1,5 +1,6 @@
 package com.yjw.dao;
 
+import com.yjw.bean.Bean;
 import com.yjw.bean.UserBean;
 import com.yjw.sql.ChatSQL;
 
@@ -11,7 +12,7 @@ public class ChatDAO extends BaseDAO{
 	}
 
 	@Override
-	public Class<?> getBeanClass() {
+	public Class<? extends Bean> getBeanClass() {
 		return UserBean.class;
 	}
 

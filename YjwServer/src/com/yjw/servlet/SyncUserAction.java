@@ -7,9 +7,9 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.yjw.bean.Bean;
 import com.yjw.dao.ContactDAO;
-import com.yjw.tool.BeanPacker;
-import com.yjw.tool.ErrorCode;
+import com.yjw.util.ErrorCode;
 
 
 public class SyncUserAction extends HttpServlet {
@@ -33,13 +33,13 @@ public class SyncUserAction extends HttpServlet {
 		response.setCharacterEncoding("UTF-8");
 		PrintWriter out = response.getWriter();
 		int id=Integer.valueOf(request.getParameter("bean"));
-		BeanPacker packer=contactDao.get(id);
-		if (packer==null){
+		Bean bean=contactDao.get(id);
+		if (bean==null){
 			out.print(ErrorCode.E_SYNC_USER_FAILED);
 		}else{
 			out.print(ErrorCode.E_SUCCESS);
 			out.print("&");
-			out.print(packer);
+			out.print(bean);
 		}
 		out.flush();
 		out.close();

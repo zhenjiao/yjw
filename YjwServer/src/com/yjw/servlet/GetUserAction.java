@@ -8,13 +8,14 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.yjw.bean.Bean;
 import com.yjw.dao.BaseDAO;
 import com.yjw.dao.UserDAO;
-import com.yjw.tool.BeanPacker;
-import com.yjw.tool.ErrorCode;
+import com.yjw.util.ErrorCode;
 
 public class GetUserAction extends HttpServlet {
 
+	private static final long serialVersionUID = 5405313508551476854L;
 	private BaseDAO userDao;
 	/**
 	 * Constructor of the object.
@@ -55,10 +56,10 @@ public class GetUserAction extends HttpServlet {
 		out.print(ErrorCode.E_SUCCESS);
 		for (Integer i=0;i<size;++i){
 			int id = Integer.valueOf(request.getParameter(i.toString()));
-			BeanPacker packer=userDao.get(id);
-			if (packer!=null){
+			Bean bean=userDao.get(id);
+			if (bean!=null){
 				out.print("&");
-				out.print(packer);
+				out.print(bean);
 			}
 		}
 		out.flush();

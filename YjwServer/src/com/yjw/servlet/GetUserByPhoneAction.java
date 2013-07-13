@@ -8,12 +8,13 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.yjw.bean.Bean;
 import com.yjw.dao.UserDAO;
-import com.yjw.tool.BeanPacker;
-import com.yjw.tool.ErrorCode;
+import com.yjw.util.ErrorCode;
 
 public class GetUserByPhoneAction extends HttpServlet {
 
+	private static final long serialVersionUID = -8369015675602977169L;
 	private UserDAO userDao;
 	/**
 	 * Constructor of the object.
@@ -54,10 +55,10 @@ public class GetUserByPhoneAction extends HttpServlet {
 		out.print(ErrorCode.E_SUCCESS);
 		for (Integer i=0;i<size;++i){
 			String cellphone = request.getParameter(i.toString());
-			BeanPacker packer=userDao.getByCellphone(cellphone);
-			if (packer!=null){
+			Bean bean=userDao.getByCellphone(cellphone);
+			if (bean!=null){
 				out.print("&");
-				out.print(packer);
+				out.print(bean);
 			}
 		}
 		out.flush();

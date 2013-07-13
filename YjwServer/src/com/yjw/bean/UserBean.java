@@ -1,8 +1,8 @@
 package com.yjw.bean;
 
-import com.yjw.tool.Util;
+import com.yjw.util.Util;
 
-public class UserBean {
+public class UserBean extends Bean {
 	private Integer id;
 	private String name;
 	private String cellphone;

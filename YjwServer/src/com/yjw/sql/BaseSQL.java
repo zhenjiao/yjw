@@ -1,13 +1,13 @@
 package com.yjw.sql;
 
+import com.yjw.bean.Bean;
 import com.yjw.bean.GetInfoBean;
 import com.yjw.sql.adapter.IfAdapter;
 import com.yjw.sql.adapter.Order;
-import com.yjw.tool.BeanPacker;
 
 public abstract class BaseSQL {
 	public final int PAGE_SIZE = 20;
-	public abstract String DBName();
+	public abstract String Table();
 	public abstract String sync(GetInfoBean bean);
 	public String sync(GetInfoBean bean,String fields){return null;}
 	public String fields(){return "*";}
@@ -17,17 +17,21 @@ public abstract class BaseSQL {
 		return s;
 	}
 	
-	public String add(BeanPacker packer){
-		return log(packer.insert(DBName()));
+	public String add(Bean bean){
+		return log(bean.insert(Table()));
+	}
+	public String update(Bean bean){
+		return log(bean.update(Table()));
 	}
 	public String get(int id){
-		return log("SELECT "+fields()+" FROM "+DBName()+" WHERE id='"+id+"'");		
+		return log("SELECT "+fields()+" FROM "+Table()+" WHERE id='"+id+"'");		
 	}
 	public String del(int id){
-		return log("DELETE FROM "+DBName()+" WHERE id='"+id+"'"); 
+		return log("DELETE FROM "+Table()+" WHERE id='"+id+"'"); 
 	}
 	public String sync(GetInfoBean bean,IfAdapter condition){
-		return log("SELECT id FROM "+DBName()+" WHERE "+condition+
+		return log("SELECT id FROM "+Table()+" WHERE "+condition+
 				new Order(bean.getPage(),PAGE_SIZE,bean.getEsc()));
 	}	
+	
 }

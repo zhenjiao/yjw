@@ -9,10 +9,11 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.yjw.dao.TransDAO;
-import com.yjw.tool.ErrorCode;
+import com.yjw.util.ErrorCode;
 
 public class ConfTransAction extends HttpServlet {
-	
+
+	private static final long serialVersionUID = 2027932223748526445L;
 	private TransDAO transDao;
 
 	/**

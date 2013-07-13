@@ -8,13 +8,13 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.yjw.bean.Bean;
 import com.yjw.bean.DealBean;
 import com.yjw.bean.TransBean;
 import com.yjw.dao.BaseDAO;
 import com.yjw.dao.DealDAO;
 import com.yjw.dao.TransDAO;
-import com.yjw.tool.BeanPacker;
-import com.yjw.tool.ErrorCode;
+import com.yjw.util.ErrorCode;
 
 public class AddDealAction extends HttpServlet {
 	
@@ -63,18 +63,17 @@ public class AddDealAction extends HttpServlet {
 		response.setCharacterEncoding("UTF-8");
 		PrintWriter out = response.getWriter();
 		//ServletOutputStream out = response.getOutputStream();
-		BeanPacker packer = new BeanPacker(request.getParameter("bean"));
+		DealBean d = Bean.Pack(request.getParameter("bean"),DealBean.class);
 		int deal_id;
-		if ((deal_id=dealDao.add(packer))>0){
+		if ((deal_id=dealDao.add(d))>0){
 			out.print(ErrorCode.E_SUCCESS);
 			out.print("&");
-			DealBean d=(DealBean)packer.getBean();
 			TransBean t=new TransBean();
 			t.setDeal_id(deal_id);
 			t.setFrom_id(d.getOwner_id());
 			t.setTo_id(d.getOwner_id());
 			t.setConfirmed(1);
-			if(transDao.add(new BeanPacker(t))>0){
+			if(transDao.add(t)>0){
 				out.print(ErrorCode.E_SUCCESS);
 			}else{
 				out.print(ErrorCode.E_ADD_TRANS_FAILED);

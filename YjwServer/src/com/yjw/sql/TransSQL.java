@@ -21,7 +21,7 @@ public class TransSQL extends BaseSQL{
 	}
 
 	@Override
-	public String DBName() {
+	public String Table() {
 		return "yjw_trans";
 	}
 
